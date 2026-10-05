@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1170548602303189');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1170548602303189&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pro-Stats-H2H - Analyse H2H Basket & Hockey</title>
+            <!-- LOGO ET CONFIGURATION MOBILE -->
+    <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/logo.jpg">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#0a0c14">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body {
+            background-color: #0a0c14; color: #ffffff; display: flex; justify-content: center;
+            padding: 15px; min-height: 100vh; background-image: radial-gradient(circle at 50% 0%, #1a1e30 0%, #0a0c14 70%);
+        }
+        
+        /* --- ÉCRAN DE CONNEXION --- */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #0a0c14; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px;
+        }
+        .login-box {
+            background-color: #131726; border: 1px solid #1f2538; border-radius: 20px;
+            padding: 30px; width: 100%; max-width: 400px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .login-box h1 { color: #FFD700; font-size: 24px; font-weight: 900; margin-bottom: 5px; }
+        .login-box p { color: #6b7280; font-size: 11px; letter-spacing: 2px; margin-bottom: 25px; text-transform: uppercase; }
+        .login-box input {
+            width: 100%; padding: 15px; background-color: #0a0c14; border: 1px solid #1f2538;
+            border-radius: 12px; color: #fff; text-align: center; font-size: 16px; font-weight: bold;
+            letter-spacing: 2px; outline: none; margin-bottom: 15px; transition: border 0.3s;
+        }
+        .login-box input:focus { border-color: #FFD700; }
+        .login-box button {
+            width: 100%; padding: 15px; background: linear-gradient(135deg, #FFD700 0%, #e6c200 100%);
+            color: #000; border: none; border-radius: 12px; font-size: 16px; font-weight: 800;
+            cursor: pointer; text-transform: uppercase; transition: all 0.2s;
+        }
+        .login-box button:hover { background: linear-gradient(135deg, #ffe033 0%, #FFD700 100%); }
+        .login-box button:active { transform: scale(0.98); }
+        .error-msg { color: #ef4444; font-size: 12px; margin-bottom: 15px; min-height: 18px; }
+
+        /* --- APPLICATION --- */
+        .app-container { width: 100%; max-width: 480px; display: none; flex-direction: column; gap: 15px; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0 5px 0; }
+        .header-title { display: flex; flex-direction: column; }
+        .header h1 { color: #FFD700; font-size: 20px; font-weight: 900; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+        .header h1 span { font-size: 22px; }
+        .header .subtitle { font-size: 9px; color: #6b7280; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; }
+        .btn-history {
+            background-color: #1f2538; border: 1px solid #2a2f45; color: #FFD700; padding: 8px 12px;
+            border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px;
+        }
+        .card {
+            background-color: #131726; border-radius: 20px; padding: 20px; border: 1px solid #1f2538;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4); position: relative; overflow: hidden;
+        }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,215,0,0.3), transparent); }
+        .card-title { font-size: 16px; font-weight: 800; text-align: center; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .pro-message {
+            background: linear-gradient(90deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05)); border: 1px dashed rgba(255, 215, 0, 0.4);
+            border-radius: 12px; padding: 12px; font-size: 12px; color: #FFD700; text-align: center; margin-bottom: 20px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .sport-filter { display: flex; gap: 8px; margin-bottom: 15px; background-color: #0a0c14; padding: 5px; border-radius: 12px; border: 1px solid #1f2538; }
+        .sport-btn {
+            flex: 1; padding: 10px; border-radius: 8px; border: none; background: transparent; color: #6b7280;
+            font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px;
+        }
+        .sport-btn.active { background-color: #1f2538; color: #FFD700; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        
+        .search-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .search-group { position: relative; }
+        .search-label { font-size: 11px; color: #6b7280; margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .search-box { position: relative; }
+        .search-box input {
+            width: 100%; padding: 14px 14px 14px 40px; background-color: #0a0c14; border: 1px solid #1f2538;
+            border-radius: 12px; color: #fff; font-size: 14px; outline: none; transition: border 0.3s;
+        }
+        .search-box input:focus { border-color: #FFD700; box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1); }
+        .search-box::before { content: '🔍'; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; opacity: 0.5; }
+        #search-dom + .search-box::before { content: '🏠'; }
+        #search-ext + .search-box::before { content: '🚌'; }
+        .autocomplete-list {
+            position: absolute; top: calc(100% + 5px); left: 0; right: 0; background-color: #131726;
+            border: 1px solid #FFD700; border-radius: 12px; max-height: 180px; overflow-y: auto;
+            z-index: 100; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+        }
+        .autocomplete-list div { padding: 12px 15px; cursor: pointer; color: #fff; font-size: 13px; border-bottom: 1px solid #1f2538; }
+        .autocomplete-list div:last-child { border-bottom: none; }
+        .autocomplete-list div:hover { background-color: rgba(255, 215, 0, 0.1); color: #FFD700; }
+        
+        .input-section-title { font-size: 12px; font-weight: 700; color: #6b7280; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
+        .score-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 20px; }
+        .score-input {
+            width: 100%; padding: 14px 2px; background-color: #0a0c14; border: 1px solid #1f2538; border-radius: 10px;
+            color: #fff; text-align: center; font-size: 15px; font-weight: 700; outline: none; transition: all 0.2s;
+        }
+        .score-input:focus { border-color: #FFD700; background-color: #131726; }
+        .score-input::placeholder { color: #374151; font-weight: 400; font-size: 13px; }
+        
+        .totals-title { font-size: 12px; font-weight: 800; color: #FFD700; text-align: center; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .totals-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 25px; }
+        .total-box {
+            background-color: rgba(255, 215, 0, 0.05); border: 1px dashed rgba(255, 215, 0, 0.4); border-radius: 10px;
+            padding: 12px 2px; text-align: center; color: #FFD700; font-weight: 800; font-size: 15px; transition: all 0.3s;
+        }
+        .total-box.filled { background-color: rgba(255, 215, 0, 0.15); border-style: solid; border-color: #FFD700; }
+        
+        .btn-analyze {
+            width: 100%; padding: 18px; background: linear-gradient(135deg, #FFD700 0%, #e6c200 100%);
+            color: #000; border: none; border-radius: 14px; font-size: 16px; font-weight: 900; cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3); text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s;
+        }
+        .btn-analyze:hover { background: linear-gradient(135deg, #ffe033 0%, #FFD700 100%); }
+        .btn-analyze:active { transform: scale(0.98); }
+        
+        .results-section { display: none; animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .results-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background-color: #0a0c14; border-radius: 12px; overflow: hidden; }
+        .results-table th { color: #6b7280; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; padding: 12px 5px; text-align: center; background-color: #131726; border-bottom: 1px solid #1f2538; font-weight: 700; }
+        .results-table td { padding: 14px 5px; text-align: center; font-size: 15px; font-weight: 700; border-bottom: 1px solid #1f2538; }
+        .results-table tr:last-child td { border-bottom: none; }
+        .results-table .team-name { text-align: left; font-size: 12px; color: #9ca3af; font-weight: 600; padding-left: 12px; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .results-table .val-min { color: #ef4444; }
+        .results-table .val-max { color: #22c55e; }
+        .results-table .val-moy { color: #FFD700; }
+        .results-table .row-total { background-color: rgba(255, 215, 0, 0.05); border-top: 1px solid rgba(255, 215, 0, 0.2); border-bottom: 1px solid rgba(255, 215, 0, 0.2); }
+        .results-table .row-total .team-name { color: #FFD700; font-weight: 800; }
+        
+        .prediction-section { margin-top: 20px; }
+        .prediction-card { background-color: #0a0c14; border: 1px solid #1f2538; border-radius: 14px; padding: 15px; margin-bottom: 12px; position: relative; overflow: hidden; }
+        .prediction-card.secure { border-left: 4px solid #22c55e; }
+        .prediction-card.balanced { border-left: 4px solid #FFD700; }
+        .prediction-card.risky { border-left: 4px solid #ef4444; }
+        .prediction-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .prediction-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
+        .prediction-card.secure .prediction-title { color: #22c55e; }
+        .prediction-card.balanced .prediction-title { color: #FFD700; }
+        .prediction-card.risky .prediction-title { color: #ef4444; }
+        .prediction-line { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+        .prediction-bars { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+        .prediction-bar-item { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+        .prediction-bar-label { width: 50px; color: #6b7280; font-weight: 700; text-transform: uppercase; }
+        .prediction-bar-track { flex: 1; height: 8px; background-color: #1f2538; border-radius: 4px; overflow: hidden; }
+        .prediction-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+        .prediction-bar-fill.under { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .prediction-bar-fill.over { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .prediction-percent { width: 35px; text-align: right; font-weight: 800; }
+        
+        .history-page { display: none; }
+        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .history-header h2 { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .btn-back { background-color: #1f2538; border: 1px solid #2a2f45; color: #fff; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .btn-back:hover { background-color: #2a2f45; border-color: #FFD700; color: #FFD700; }
+        .history-list { display: flex; flex-direction: column; gap: 10px; }
+        .history-item { background-color: #0a0c14; border: 1px solid #1f2538; border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; transition: border 0.3s; }
+        .history-item:hover { border-color: rgba(255, 215, 0, 0.3); }
+        .history-info { flex: 1; min-width: 0; }
+        .history-teams { font-size: 14px; font-weight: 700; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .history-details { font-size: 11px; color: #6b7280; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .history-badge { background-color: rgba(249, 115, 22, 0.15); color: #f97316; padding: 2px 8px; border-radius: 10px; font-weight: 700; font-size: 10px; }
+        .history-actions { display: flex; gap: 5px; margin-left: 10px; flex-shrink: 0; }
+        .btn-icon { width: 36px; height: 36px; border-radius: 10px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; border: 1px solid; }
+        .btn-view { background-color: rgba(255, 215, 0, 0.1); color: #FFD700; border-color: rgba(255, 215, 0, 0.3); }
+        .btn-view:hover { background-color: #FFD700; color: #000; }
+        .btn-delete { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.3); }
+        .btn-delete:hover { background-color: #ef4444; color: #fff; }
+        .btn-load-more { width: 100%; padding: 14px; margin-top: 15px; background-color: #1f2538; border: 1px dashed #2a2f45; color: #FFD700; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-load-more:hover { background-color: #2a2f45; border-color: #FFD700; }
+        .empty-history { text-align: center; color: #6b7280; font-size: 13px; padding: 40px 20px; font-style: italic; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0c14; }
+        ::-webkit-scrollbar-thumb { background: #1f2538; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #FFD700; }
+    </style>
+</head>
+<body>
+
+<!-- ================= ÉCRAN DE CONNEXION ================= -->
+<div id="login-screen">
+    <div class="login-box">
+        <h1>🏆 Pro-Stats-H2H</h1>
+        <p>Accès Sécurisé</p>
+        <input type="text" id="accessCode" placeholder="Entrez votre code d'activation" autocomplete="off">
+        <p class="error-msg" id="loginError"></p>
+        <button onclick="verifierCode()">DÉVERROUILLER</button>
+    </div>
+</div>
+
+<!-- ================= APPLICATION PRINCIPALE ================= -->
+<div class="app-container" id="app-container">
+    
+    <div class="header">
+        <div class="header-title">
+            <h1><span>🏆</span> Pro-Stats-H2H</h1>
+            <div class="subtitle">Basket & Hockey • Analyse Mathématique</div>
+        </div>
+        <button class="btn-history" onclick="showHistory()">
+            <span>📚</span> HISTORIQUE
+        </button>
+    </div>
+
+    <div id="page-analyze">
+        <div class="card" id="input-section">
+            <div class="card-title">🛠️ Saisie Manuelle</div>
+            <div class="pro-message"><span>⚡</span> Mode PRO : Extraction automatique disponible prochainement.</div>
+
+            <div class="sport-filter">
+                <button class="sport-btn active" id="btn-basket" onclick="setSport('basket')">🏀 Basket</button>
+                <button class="sport-btn" id="btn-hockey" onclick="setSport('hockey')">🏒 Hockey</button>
+            </div>
+
+            <div class="search-container">
+                <div class="search-group">
+                    <label class="search-label" id="search-dom">Équipe Domicile</label>
+                    <div class="search-box">
+                        <input type="text" id="teamDom" placeholder="Rechercher l'équipe à domicile..." oninput="searchTeams('dom')" onfocus="searchTeams('dom')">
+                        <div class="autocomplete-list" id="list-dom"></div>
+                    </div>
+                </div>
+                <div class="search-group">
+                    <label class="search-label" id="search-ext">Équipe Extérieur</label>
+                    <div class="search-box">
+                        <input type="text" id="teamExt" placeholder="Rechercher l'équipe à l'extérieur..." oninput="searchTeams('ext')" onfocus="searchTeams('ext')">
+                        <div class="autocomplete-list" id="list-ext"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-section-title">🏠 Domicile (5 derniers H2H)</div>
+            <div class="score-grid">
+                <input type="number" class="score-input" id="dom1" placeholder="M1" oninput="calculateTotals()">
+                <input type="number" class="score-input" id="dom2" placeholder="M2" oninput="calculateTotals()">
+                <input type="number" class="score-input" id="dom3" placeholder="M3" oninput="calculateTotals()">
+                <input type="number" class="score-input" id="dom4" placeholder="M4" oninput="calculateTotals()">
+                <input type="number" class="score-input" id="dom5" placeholder="M5" oninput="calculateTotals()">
+            </div>
+
+            <div class="input-section-title">🚌 Extérieur (5 derniers H2H)</div>
+            <div class="score-grid">
+                <input type="number" class="score-input" id="ext1" placeholder="M1" oninput="calculateTotals()">
+                <input type="number" class="score-input" id="ext2" placeholder="M2" oninput="calculateTotals()">
+                <input type="number" class="score-input" id="ext3" placeholder="M3" oninput="calculateTotals()">
+                <input type="number" class="score-input" id="ext4" placeholder="M4" oninput="calculateTotals()">
+                <input type="number" class="score-input" id="ext5" placeholder="M5" oninput="calculateTotals()">
+            </div>
+
+            <div class="totals-title">📊 Totaux par Match</div>
+            <div class="totals-grid">
+                <div class="total-box" id="total1">-</div>
+                <div class="total-box" id="total2">-</div>
+                <div class="total-box" id="total3">-</div>
+                <div class="total-box" id="total4">-</div>
+                <div class="total-box" id="total5">-</div>
+            </div>
+
+            <button class="btn-analyze" onclick="analyzeMatch()">ANALYSER GRATUITEMENT</button>
+        </div>
+
+        <div class="card results-section" id="results-section">
+            <div class="card-title">🏆 Pronostic VIP PRO</div>
+            <table class="results-table">
+                <thead><tr><th>ÉQUIPE</th><th>MIN</th><th>MAX</th><th>MOY</th></tr></thead>
+                <tbody>
+                    <tr><td class="team-name" id="res-dom-name">🏠 Domicile</td><td class="val-min" id="res-dom-min">-</td><td class="val-max" id="res-dom-max">-</td><td class="val-moy" id="res-dom-moy">-</td></tr>
+                    <tr><td class="team-name" id="res-ext-name">🚌 Extérieur</td><td class="val-min" id="res-ext-min">-</td><td class="val-max" id="res-ext-max">-</td><td class="val-moy" id="res-ext-moy">-</td></tr>
+                    <tr class="row-total"><td class="team-name">📊 TOTAL</td><td class="val-min" id="res-tot-min">-</td><td class="val-max" id="res-tot-max">-</td><td class="val-moy" id="res-tot-moy">-</td></tr>
+                </tbody>
+            </table>
+            <div class="prediction-section" id="prediction-section"></div>
+            <button class="btn-analyze" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #fff; margin-top: 15px;" onclick="saveToHistory()">
+                <span>💾</span> SAUVEGARDER DANS L'HISTORIQUE
+            </button>
+        </div>
+    </div>
+
+    <div id="page-history" class="card history-page">
+        <div class="history-header">
+            <h2>📚 Historique</h2>
+            <button class="btn-back" onclick="hideHistory()">⬅️ Retour</button>
+        </div>
+        <div class="history-list" id="history-list"></div>
+        <button class="btn-load-more" id="btn-load-more" onclick="loadMoreHistory()" style="display: none;">⬇️ VOIR PLUS</button>
+    </div>
+
+</div>
+
+<!-- ================= SCRIPTS FIREBASE (SANS AUTH) & LOGIQUE ================= -->
+<script type="module">
+    // Importation des fonctions Firebase (Firestore uniquement !)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+    // VOTRE CONFIGURATION FIREBASE
+    const firebaseConfig = {
+        apiKey: "AIzaSyCJNy2-yYbCIxe85hZcy4L8UHlcOK3O1qM",
+        authDomain: "pro-stats-h2h.firebaseapp.com",
+        projectId: "pro-stats-h2h",
+        storageBucket: "pro-stats-h2h.firebasestorage.app",
+        messagingSenderId: "650537605931",
+        appId: "1:650537605931:web:f876821200ea354283436e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // --- FONCTION DE VÉRIFICATION DU CODE (Firestore uniquement) ---
+    window.verifierCode = async function() {
+        const codeInput = document.getElementById('accessCode').value.trim().toUpperCase();
+        const errorMsg = document.getElementById('loginError');
+        const loginScreen = document.getElementById('login-screen');
+        const appContainer = document.getElementById('app-container');
+
+        if (!codeInput) {
+            errorMsg.textContent = "Veuillez entrer un code.";
+            return;
+        }
+
+        try {
+            // On cherche le document dans la collection "codes_acces"
+            const docRef = doc(db, "codes_acces", codeInput);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists() && docSnap.data().actif === true) {
+                // Succès : on déverrouille l'application
+                loginScreen.style.display = 'none';
+                appContainer.style.display = 'flex';
+                localStorage.setItem('user_code', codeInput); // On sauvegarde le code pour ne pas le redemander
+            } else {
+                errorMsg.textContent = "Code invalide ou désactivé.";
+            }
+        } catch (error) {
+            console.error(error);
+            errorMsg.textContent = "Erreur de connexion. Vérifiez votre réseau.";
+        }
+    };
+
+    // Si un code est déjà sauvegardé, on déverrouille directement
+    if (localStorage.getItem('user_code')) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app-container').style.display = 'flex';
+    }
+
+    // ================= LOGIQUE DE L'APPLICATION =================
+    const teamsDatabase = {
+        basket: [
+            "Atlanta Hawks", "Boston Celtics", "Brooklyn Nets", "Charlotte Hornets", "Chicago Bulls", "Cleveland Cavaliers", "Dallas Mavericks", "Denver Nuggets", "Detroit Pistons", "Golden State Warriors",
+            "Houston Rockets", "Indiana Pacers", "LA Clippers", "Los Angeles Lakers", "Memphis Grizzlies", "Miami Heat", "Milwaukee Bucks", "Minnesota Timberwolves", "New Orleans Pelicans", "New York Knicks",
+            "Oklahoma City Thunder", "Orlando Magic", "Philadelphia 76ers", "Phoenix Suns", "Portland Trail Blazers", "Sacramento Kings", "San Antonio Spurs", "Toronto Raptors", "Utah Jazz", "Washington Wizards",
+            "Real Madrid Baloncesto", "FC Barcelona Bàsquet", "Olympiacos", "Panathinaikos", "Fenerbahçe", "Anadolu Efes", "AS Monaco Basket", "LDLC ASVEL", "EA7 Emporio Armani Milan", "Baskonia",
+            "Bayern Munich", "Maccabi Tel Aviv", "Žalgiris Kaunas", "Crvena Zvezda", "Partizan", "Valencia Basket", "Virtus Bologna", "ALBA Berlin", "Unicaja", "Gran Canaria", "Tenerife", "Joventut", "Bilbao", "Zaragoza",
+            "Olimpia Milano", "Venezia", "Brescia", "Trento", "Sassari", "Torino", "Napoli", "Varese", "Ratiopharm Ulm", "Bonn", "Ludwigsburg", "Oldenburg", "Göttingen", "Hamburg", "Frankfurt", "Würzburg",
+            "AS Monaco", "ASVEL", "Paris Basketball", "Le Mans", "Strasbourg", "Nanterre", "Dijon", "Bourg-en-Bresse", "Cholet", "Limoges", "AEK Athens", "PAOK", "Aris", "Peristeri", "Promitheas", "Kolossos", "Larisa", "Ionikos",
+            "Galatasaray", "Beşiktaş", "Türk Telekom", "Pınar Karşıyaka", "Tofaş", "Bahçeşehir", "Merkezefendi", "Bursaspor", "CSKA Moscow", "Zenit Saint Petersburg", "Lokomotiv Kuban", "UNICS Kazan", "Avtodor", "Nizhny Novgorod", "Parma", "Samara", "Uralmash", "MBA Moscow",
+            "Sydney Kings", "Melbourne United", "Perth Wildcats", "Brisbane Bullets", "Adelaide 36ers", "Cairns Taipans", "Illawarra Hawks", "SE Melbourne Phoenix", "Tasmania JackJumpers", "New Zealand Breakers"
+        ],
+        hockey: [
+            "Anaheim Ducks", "Arizona Coyotes", "Boston Bruins", "Buffalo Sabres", "Calgary Flames", "Carolina Hurricanes", "Chicago Blackhawks", "Colorado Avalanche", "Columbus Blue Jackets", "Dallas Stars",
+            "Detroit Red Wings", "Edmonton Oilers", "Florida Panthers", "Los Angeles Kings", "Minnesota Wild", "Montreal Canadiens", "Nashville Predators", "New Jersey Devils", "New York Islanders", "New York Rangers",
+            "Ottawa Senators", "Philadelphia Flyers", "Pittsburgh Penguins", "San Jose Sharks", "Seattle Kraken", "St. Louis Blues", "Tampa Bay Lightning", "Toronto Maple Leafs", "Vancouver Canucks", "Vegas Golden Knights", "Washington Capitals", "Winnipeg Jets",
+            "CSKA Moscow", "SKA Saint Petersburg", "Ak Bars Kazan", "Dynamo Moscow", "Metallurg Magnitogorsk", "Avangard Omsk", "Salavat Yulaev Ufa", "Traktor Chelyabinsk", "Lokomotiv Yaroslavl", "Severstal Cherepovets", "Torpedo Nizhny Novgorod", "Spartak Moscow", "Dynamo Minsk", "Barys Astana", "Avtomobilist Yekaterinburg", "Admiral Vladivostok", "Amur Khabarovsk", "Sibir Novosibirsk", "Neftekhimik Nizhnekamsk", "Vityaz Podolsk", "Sochi", "Kunlun Red Star", "Lada Togliatti",
+            "Färjestad BK", "Frölunda HC", "Luleå HF", "Skellefteå AIK", "Växjö Lakers", "Rögle BK", "Örebro HK", "Leksands IF", "Malmö Redhawks", "HV71", "Tappara", "TPS", "HIFK", "Kärpät", "Lukko", "Ilves", "JYP", "HPK", "Ässät", "Sport",
+            "ZSC Lions", "SC Bern", "EV Zug", "HC Davos", "Fribourg-Gottéron", "Lausanne HC", "Genève-Servette", "HC Lugano", "EHC Biel", "SC Rapperswil-Jona", "Eisbären Berlin", "Red Bull Munich", "Adler Mannheim", "ERC Ingolstadt", "Straubing Tigers", "Kölner Haie", "Fischtown Pinguins", "Grizzlys Wolfsburg", "Nürnberg Ice Tigers", "Augsburger Panther",
+            "Oceláři Třinec", "Sparta Prague", "Slavia Prague", "Kometa Brno", "Pilsen", "Liberec", "Mountfield HK", "Vítkovice", "Olomouc", "Karlovy Vary", "Red Bull Salzburg", "KAC Klagenfurt", "Vienna Capitals", "Bolzano", "Villacher SV", "Graz 99ers", "HC Innsbruck", "Pioneers Vorarlberg", "Asiago", "Fehérvár AV19",
+            "Hershey Bears", "Chicago Wolves", "Coachella Valley Firebirds", "Providence Bruins", "Texas Stars", "Milwaukee Admirals", "Bakersfield Condors", "Cleveland Monsters", "Rochester Americans", "Utica Comets", "Rouen Dragons", "Grenoble Brûleurs de Loups", "Angers Ducs", "Bordeaux Boxers", "Amiens Gothiques", "Gap Rapaces", "Briançon Diables Rouges", "Nice Aigles", "Cergy-Pontoise Jokers", "Chamonix Pionniers"
+        ]
+    };
+
+    let currentSport = 'basket';
+    let currentAnalysis = null;
+    let historyDisplayLimit = 5;
+    let historyAll = [];
+
+    window.setSport = function(sport) {
+        currentSport = sport;
+        document.getElementById('btn-basket').classList.remove('active');
+        document.getElementById('btn-hockey').classList.remove('active');
+        if (sport === 'basket') document.getElementById('btn-basket').classList.add('active');
+        else document.getElementById('btn-hockey').classList.add('active');
+        document.getElementById('teamDom').value = ''; document.getElementById('teamExt').value = '';
+        document.getElementById('list-dom').style.display = 'none'; document.getElementById('list-ext').style.display = 'none';
+    };
+
+    window.searchTeams = function(type) {
+        const inputId = type === 'dom' ? 'teamDom' : 'teamExt';
+        const listId = type === 'dom' ? 'list-dom' : 'list-ext';
+        const input = document.getElementById(inputId);
+        const list = document.getElementById(listId);
+        const query = input.value.toLowerCase().trim();
+        list.innerHTML = '';
+        if (query.length === 0) { list.style.display = 'none'; return; }
+        const teams = teamsDatabase[currentSport];
+        const filtered = teams.filter(team => team.toLowerCase().includes(query));
+        if (filtered.length > 0) {
+            list.style.display = 'block';
+            filtered.slice(0, 15).forEach(team => {
+                const div = document.createElement('div');
+                div.textContent = team;
+                div.onclick = () => { input.value = team; list.style.display = 'none'; };
+                list.appendChild(div);
+            });
+        } else { list.style.display = 'none'; }
+    };
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.search-group')) {
+            document.getElementById('list-dom').style.display = 'none';
+            document.getElementById('list-ext').style.display = 'none';
+        }
+    });
+
+    window.calculateTotals = function() {
+        for (let i = 1; i <= 5; i++) {
+            const dom = parseFloat(document.getElementById('dom' + i).value) || 0;
+            const ext = parseFloat(document.getElementById('ext' + i).value) || 0;
+            const totalBox = document.getElementById('total' + i);
+            if (dom === 0 && ext === 0) { totalBox.textContent = '-'; totalBox.classList.remove('filled'); }
+            else { totalBox.textContent = dom + ext; totalBox.classList.add('filled'); }
+        }
+    };
+
+    window.analyzeMatch = function() {
+        const domScores = [], extScores = [], totals = [];
+        const domName = document.getElementById('teamDom').value.trim() || 'Domicile';
+        const extName = document.getElementById('teamExt').value.trim() || 'Extérieur';
+
+        for (let i = 1; i <= 5; i++) {
+            const domVal = parseFloat(document.getElementById('dom' + i).value);
+            const extVal = parseFloat(document.getElementById('ext' + i).value);
+            if (!isNaN(domVal) && !isNaN(extVal) && domVal > 0 && extVal > 0) {
+                domScores.push(domVal); extScores.push(extVal); totals.push(domVal + extVal);
+            }
+        }
+
+        if (totals.length < 2) { alert("⚠️ Veuillez saisir au moins 2 matchs H2H complets pour lancer l'analyse."); return; }
+
+        const domMin = Math.min(...domScores), domMax = Math.max(...domScores);
+        const domMoy = (domScores.reduce((a, b) => a + b, 0) / domScores.length).toFixed(1);
+        const extMin = Math.min(...extScores), extMax = Math.max(...extScores);
+        const extMoy = (extScores.reduce((a, b) => a + b, 0) / extScores.length).toFixed(1);
+        const totMin = Math.min(...totals), totMax = Math.max(...totals);
+        const totMoy = (totals.reduce((a, b) => a + b, 0) / totals.length).toFixed(1);
+
+        document.getElementById('res-dom-name').textContent = "🏠 " + domName;
+        document.getElementById('res-ext-name').textContent = "🚌 " + extName;
+        document.getElementById('res-dom-min').textContent = domMin; document.getElementById('res-dom-max').textContent = domMax; document.getElementById('res-dom-moy').textContent = domMoy;
+        document.getElementById('res-ext-min').textContent = extMin; document.getElementById('res-ext-max').textContent = extMax; document.getElementById('res-ext-moy').textContent = extMoy;
+        document.getElementById('res-tot-min').textContent = totMin; document.getElementById('res-tot-max').textContent = totMax; document.getElementById('res-tot-moy').textContent = totMoy;
+
+        document.getElementById('prediction-section').innerHTML = generatePredictions(totMin, totMax, parseFloat(totMoy));
+
+        currentAnalysis = {
+            sport: currentSport, domName, extName, domScores, extScores, totMin, totMax, totMoy,
+            date: new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+        };
+
+        document.getElementById('results-section').style.display = 'block';
+        document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    function generatePredictions(min, max, moy) {
+        const secureLine = Math.ceil((max + 5) / 5) * 5;
+        const secureUnderPercent = 88; const secureOverPercent = 12;
+        const balancedLine = Math.ceil((moy + 10) / 5) * 5;
+        let balancedUnderPercent = Math.round(((max - balancedLine) / (max - min)) * 100);
+        if (balancedUnderPercent > 95) balancedUnderPercent = 95; if (balancedUnderPercent < 5) balancedUnderPercent = 5;
+        const balancedOverPercent = 100 - balancedUnderPercent;
+        const riskyLine = Math.floor((min - 5) / 5) * 5;
+        const riskyUnderPercent = 15; const riskyOverPercent = 85;
+
+        return `
+            <div class="prediction-card secure">
+                <div class="prediction-header"><div class="prediction-title">🟢 SÉCURISÉ</div></div>
+                <div class="prediction-line">Ligne proposée : ${secureLine} pts</div>
+                <div class="prediction-bars">
+                    <div class="prediction-bar-item"><div class="prediction-bar-label">MOINS</div><div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${secureUnderPercent}%;"></div></div><div class="prediction-percent" style="color: #22c55e;">${secureUnderPercent}%</div></div>
+                    <div class="prediction-bar-item"><div class="prediction-bar-label">PLUS</div><div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${secureOverPercent}%;"></div></div><div class="prediction-percent" style="color: #ef4444;">${secureOverPercent}%</div></div>
+                </div>
+            </div>
+            <div class="prediction-card balanced">
+                <div class="prediction-header"><div class="prediction-title">🟡 ÉQUILIBRÉ</div></div>
+                <div class="prediction-line">Ligne proposée : ${balancedLine} pts</div>
+                <div class="prediction-bars">
+                    <div class="prediction-bar-item"><div class="prediction-bar-label">MOINS</div><div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${balancedUnderPercent}%;"></div></div><div class="prediction-percent" style="color: #22c55e;">${balancedUnderPercent}%</div></div>
+                    <div class="prediction-bar-item"><div class="prediction-bar-label">PLUS</div><div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${balancedOverPercent}%;"></div></div><div class="prediction-percent" style="color: #ef4444;">${balancedOverPercent}%</div></div>
+                </div>
+            </div>
+            <div class="prediction-card risky">
+                <div class="prediction-header"><div class="prediction-title">🔴 RISQUÉ</div></div>
+                <div class="prediction-line">Ligne proposée : ${riskyLine} pts</div>
+                <div class="prediction-bars">
+                    <div class="prediction-bar-item"><div class="prediction-bar-label">MOINS</div><div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${riskyUnderPercent}%;"></div></div><div class="prediction-percent" style="color: #22c55e;">${riskyUnderPercent}%</div></div>
+                    <div class="prediction-bar-item"><div class="prediction-bar-label">PLUS</div><div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${riskyOverPercent}%;"></div></div><div class="prediction-percent" style="color: #ef4444;">${riskyOverPercent}%</div></div>
+                </div>
+            </div>`;
+    }
+
+    window.saveToHistory = function() {
+        if (!currentAnalysis) return;
+        let history = JSON.parse(localStorage.getItem('h2h_history_v5') || '[]');
+        history.unshift(currentAnalysis);
+        localStorage.setItem('h2h_history_v5', JSON.stringify(history));
+        alert("✅ Analyse sauvegardée !");
+        document.getElementById('teamDom').value = ''; document.getElementById('teamExt').value = '';
+        for (let i = 1; i <= 5; i++) { document.getElementById('dom' + i).value = ''; document.getElementById('ext' + i).value = ''; }
+        calculateTotals(); document.getElementById('results-section').style.display = 'none'; currentAnalysis = null;
+    };
+
+    window.showHistory = function() {
+        document.getElementById('page-analyze').style.display = 'none';
+        document.getElementById('page-history').style.display = 'block';
+        historyDisplayLimit = 5; renderHistory();
+    };
+
+    window.hideHistory = function() {
+        document.getElementById('page-history').style.display = 'none';
+        document.getElementById('page-analyze').style.display = 'block';
+    };
+
+    function renderHistory() {
+        historyAll = JSON.parse(localStorage.getItem('h2h_history_v5') || '[]');
+        const list = document.getElementById('history-list');
+        const btnLoadMore = document.getElementById('btn-load-more');
+        if (historyAll.length === 0) { list.innerHTML = '<div class="empty-history">Aucune analyse sauvegardée.</div>'; btnLoadMore.style.display = 'none'; return; }
+        const displayed = historyAll.slice(0, historyDisplayLimit);
+        list.innerHTML = '';
+        displayed.forEach((item, index) => {
+            const div = document.createElement('div'); div.className = 'history-item';
+            const sportIcon = item.sport === 'basket' ? '🏀' : '🏒';
+            div.innerHTML = `
+                <div class="history-info">
+                    <div class="history-teams">${sportIcon} ${item.domName} vs ${item.extName}</div>
+                    <div class="history-details"><span>${item.date}</span><span class="history-badge">Moy: ${item.totMoy}</span><span class="history-badge" style="background-color: rgba(255,215,0,0.15); color:#FFD700;">Max: ${item.totMax}</span></div>
+                </div>
+                <div class="history-actions">
+                    <button class="btn-icon btn-view" onclick="reloadAnalysis(${index})" title="Revoir">👁️</button>
+                    <button class="btn-icon btn-delete" onclick="deleteHistoryItem(${index})" title="Supprimer">🗑️</button>
+                </div>`;
+            list.appendChild(div);
+        });
+        btnLoadMore.style.display = historyAll.length > historyDisplayLimit ? 'block' : 'none';
+    }
+
+    window.loadMoreHistory = function() { historyDisplayLimit += 5; renderHistory(); };
+
+    window.deleteHistoryItem = function(index) {
+        if (!confirm("Voulez-vous vraiment supprimer cette analyse ?")) return;
+        let history = JSON.parse(localStorage.getItem('h2h_history_v5') || '[]');
+        history.splice(index, 1); localStorage.setItem('h2h_history_v5', JSON.stringify(history)); renderHistory();
+    };
+
+    window.reloadAnalysis = function(index) {
+        let history = JSON.parse(localStorage.getItem('h2h_history_v5') || '[]');
+        const item = history[index]; if (!item) return;
+        hideHistory(); setSport(item.sport);
+        document.getElementById('teamDom').value = item.domName; document.getElementById('teamExt').value = item.extName;
+        for (let i = 1; i <= 5; i++) { document.getElementById('dom' + i).value = item.domScores[i-1] || ''; document.getElementById('ext' + i).value = item.extScores[i-1] || ''; }
+        calculateTotals(); analyzeMatch();
+    };
+</script>
+
+</body>
+</html>
