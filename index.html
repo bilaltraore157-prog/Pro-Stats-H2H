@@ -1,18 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Pro-Stats-H2H - Analyse H2H Basket & Hockey</title>
-            <!-- LOGO ET CONFIGURATION MOBILE -->
-    <link rel="icon" type="image/png" href="assets/logo.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/logo.png">
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="theme-color" content="#0a0c14">
+    <title>PRO STATS V6 - Analyse H2H Basket & Hockey</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
         
@@ -47,7 +38,6 @@
             cursor: pointer; text-transform: uppercase; transition: all 0.2s;
         }
         .login-box button:hover { background: linear-gradient(135deg, #ffe033 0%, #FFD700 100%); }
-        .login-box button:active { transform: scale(0.98); }
         .error-msg { color: #ef4444; font-size: 12px; margin-bottom: 15px; min-height: 18px; }
 
         /* --- APPLICATION --- */
@@ -139,6 +129,43 @@
         .results-table .row-total { background-color: rgba(255, 215, 0, 0.05); border-top: 1px solid rgba(255, 215, 0, 0.2); border-bottom: 1px solid rgba(255, 215, 0, 0.2); }
         .results-table .row-total .team-name { color: #FFD700; font-weight: 800; }
         
+        /* --- SECTION DOMINANCE H2H --- */
+        .dominance-section {
+            background: linear-gradient(135deg, #131726 0%, #1a1e30 100%);
+            border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 16px;
+            padding: 20px; margin-bottom: 20px;
+        }
+        .dominance-title {
+            font-size: 12px; font-weight: 800; color: #FFD700;
+            text-align: center; text-transform: uppercase; letter-spacing: 2px;
+            margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .dominance-bars { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
+        .dominance-row { display: flex; flex-direction: column; gap: 6px; }
+        .dominance-label { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700; }
+        .dominance-label .team { color: #fff; display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%; }
+        .dominance-label .wins { color: #FFD700; font-family: 'Inter', monospace; font-weight: 900; font-size: 14px; }
+        .dominance-bar-track { height: 12px; background-color: #0a0c14; border-radius: 6px; overflow: hidden; position: relative; border: 1px solid #1f2538; }
+        .dominance-bar-fill { height: 100%; border-radius: 6px; transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .dominance-bar-fill.dom { background: linear-gradient(90deg, #FFD700, #FFA500); }
+        .dominance-bar-fill.ext { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .dominance-bar-fill.draw { background: linear-gradient(90deg, #6b7280, #9ca3af); }
+        .dominance-verdict {
+            text-align: center; padding: 12px; border-radius: 12px;
+            font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px;
+            background-color: rgba(255, 215, 0, 0.1); color: #FFD700;
+            border: 1px dashed rgba(255, 215, 0, 0.4);
+        }
+        .dominance-verdict.ext-verdict {
+            background-color: rgba(59, 130, 246, 0.1); color: #60a5fa;
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+        .dominance-verdict.balanced-verdict {
+            background-color: rgba(107, 114, 128, 0.1); color: #9ca3af;
+            border-color: rgba(107, 114, 128, 0.4);
+        }
+        
+        /* --- PRÉDICTIONS --- */
         .prediction-section { margin-top: 20px; }
         .prediction-card { background-color: #0a0c14; border: 1px solid #1f2538; border-radius: 14px; padding: 15px; margin-bottom: 12px; position: relative; overflow: hidden; }
         .prediction-card.secure { border-left: 4px solid #22c55e; }
@@ -159,10 +186,18 @@
         .prediction-bar-fill.over { background: linear-gradient(90deg, #ef4444, #f87171); }
         .prediction-percent { width: 35px; text-align: right; font-weight: 800; }
         
+        .btn-save {
+            width: 100%; padding: 15px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 800;
+            cursor: pointer; transition: all 0.2s; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-save:hover { background: linear-gradient(135deg, #34d399 0%, #22c55e 100%); }
+        
+        /* --- HISTORIQUE --- */
         .history-page { display: none; }
         .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .history-header h2 { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
-        .btn-back { background-color: #1f2538; border: 1px solid #2a2f45; color: #fff; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .btn-back { background-color: #1f2538; border: 1px solid #2a2f45; color: #fff; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
         .btn-back:hover { background-color: #2a2f45; border-color: #FFD700; color: #FFD700; }
         .history-list { display: flex; flex-direction: column; gap: 10px; }
         .history-item { background-color: #0a0c14; border: 1px solid #1f2538; border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; transition: border 0.3s; }
@@ -191,7 +226,7 @@
 <!-- ================= ÉCRAN DE CONNEXION ================= -->
 <div id="login-screen">
     <div class="login-box">
-        <h1>🏆 Pro-Stats-H2H</h1>
+        <h1>🏆 PRO STATS V6</h1>
         <p>Accès Sécurisé</p>
         <input type="text" id="accessCode" placeholder="Entrez votre code d'activation" autocomplete="off">
         <p class="error-msg" id="loginError"></p>
@@ -204,12 +239,10 @@
     
     <div class="header">
         <div class="header-title">
-            <h1><span>🏆</span> Pro-Stats-H2H</h1>
+            <h1><span>🏆</span> PRO STATS V6</h1>
             <div class="subtitle">Basket & Hockey • Analyse Mathématique</div>
         </div>
-        <button class="btn-history" onclick="showHistory()">
-            <span>📚</span> HISTORIQUE
-        </button>
+        <button class="btn-history" onclick="showHistory()"><span>📚</span> HISTORIQUE</button>
     </div>
 
     <div id="page-analyze">
@@ -279,10 +312,13 @@
                     <tr class="row-total"><td class="team-name">📊 TOTAL</td><td class="val-min" id="res-tot-min">-</td><td class="val-max" id="res-tot-max">-</td><td class="val-moy" id="res-tot-moy">-</td></tr>
                 </tbody>
             </table>
+            
+            <!-- NOUVELLE SECTION DOMINANCE H2H -->
+            <div class="dominance-section" id="dominance-section"></div>
+            
             <div class="prediction-section" id="prediction-section"></div>
-            <button class="btn-analyze" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #fff; margin-top: 15px;" onclick="saveToHistory()">
-                <span>💾</span> SAUVEGARDER DANS L'HISTORIQUE
-            </button>
+            
+            <button class="btn-save" onclick="saveToHistory()"><span>💾</span> SAUVEGARDER DANS L'HISTORIQUE</button>
         </div>
     </div>
 
@@ -297,13 +333,11 @@
 
 </div>
 
-<!-- ================= SCRIPTS FIREBASE (SANS AUTH) & LOGIQUE ================= -->
+<!-- ================= SCRIPTS FIREBASE ================= -->
 <script type="module">
-    // Importation des fonctions Firebase (Firestore uniquement !)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-    // VOTRE CONFIGURATION FIREBASE
     const firebaseConfig = {
         apiKey: "AIzaSyCJNy2-yYbCIxe85hZcy4L8UHlcOK3O1qM",
         authDomain: "pro-stats-h2h.firebaseapp.com",
@@ -316,28 +350,22 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- FONCTION DE VÉRIFICATION DU CODE (Firestore uniquement) ---
     window.verifierCode = async function() {
         const codeInput = document.getElementById('accessCode').value.trim().toUpperCase();
         const errorMsg = document.getElementById('loginError');
         const loginScreen = document.getElementById('login-screen');
         const appContainer = document.getElementById('app-container');
 
-        if (!codeInput) {
-            errorMsg.textContent = "Veuillez entrer un code.";
-            return;
-        }
+        if (!codeInput) { errorMsg.textContent = "Veuillez entrer un code."; return; }
 
         try {
-            // On cherche le document dans la collection "codes_acces"
             const docRef = doc(db, "codes_acces", codeInput);
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists() && docSnap.data().actif === true) {
-                // Succès : on déverrouille l'application
                 loginScreen.style.display = 'none';
                 appContainer.style.display = 'flex';
-                localStorage.setItem('user_code', codeInput); // On sauvegarde le code pour ne pas le redemander
+                localStorage.setItem('user_code', codeInput);
             } else {
                 errorMsg.textContent = "Code invalide ou désactivé.";
             }
@@ -347,13 +375,14 @@
         }
     };
 
-    // Si un code est déjà sauvegardé, on déverrouille directement
     if (localStorage.getItem('user_code')) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('app-container').style.display = 'flex';
     }
+</script>
 
-    // ================= LOGIQUE DE L'APPLICATION =================
+<script>
+    // ================= BASE DE DONNÉES DES ÉQUIPES =================
     const teamsDatabase = {
         basket: [
             "Atlanta Hawks", "Boston Celtics", "Brooklyn Nets", "Charlotte Hornets", "Chicago Bulls", "Cleveland Cavaliers", "Dallas Mavericks", "Denver Nuggets", "Detroit Pistons", "Golden State Warriors",
@@ -362,8 +391,10 @@
             "Real Madrid Baloncesto", "FC Barcelona Bàsquet", "Olympiacos", "Panathinaikos", "Fenerbahçe", "Anadolu Efes", "AS Monaco Basket", "LDLC ASVEL", "EA7 Emporio Armani Milan", "Baskonia",
             "Bayern Munich", "Maccabi Tel Aviv", "Žalgiris Kaunas", "Crvena Zvezda", "Partizan", "Valencia Basket", "Virtus Bologna", "ALBA Berlin", "Unicaja", "Gran Canaria", "Tenerife", "Joventut", "Bilbao", "Zaragoza",
             "Olimpia Milano", "Venezia", "Brescia", "Trento", "Sassari", "Torino", "Napoli", "Varese", "Ratiopharm Ulm", "Bonn", "Ludwigsburg", "Oldenburg", "Göttingen", "Hamburg", "Frankfurt", "Würzburg",
-            "AS Monaco", "ASVEL", "Paris Basketball", "Le Mans", "Strasbourg", "Nanterre", "Dijon", "Bourg-en-Bresse", "Cholet", "Limoges", "AEK Athens", "PAOK", "Aris", "Peristeri", "Promitheas", "Kolossos", "Larisa", "Ionikos",
-            "Galatasaray", "Beşiktaş", "Türk Telekom", "Pınar Karşıyaka", "Tofaş", "Bahçeşehir", "Merkezefendi", "Bursaspor", "CSKA Moscow", "Zenit Saint Petersburg", "Lokomotiv Kuban", "UNICS Kazan", "Avtodor", "Nizhny Novgorod", "Parma", "Samara", "Uralmash", "MBA Moscow",
+            "AS Monaco", "ASVEL", "Paris Basketball", "Le Mans", "Strasbourg", "Nanterre", "Dijon", "Bourg-en-Bresse", "Cholet", "Limoges",
+            "AEK Athens", "PAOK", "Aris", "Peristeri", "Promitheas", "Kolossos", "Larisa", "Ionikos",
+            "Galatasaray", "Beşiktaş", "Türk Telekom", "Pınar Karşıyaka", "Tofaş", "Bahçeşehir", "Merkezefendi", "Bursaspor",
+            "CSKA Moscow", "Zenit Saint Petersburg", "Lokomotiv Kuban", "UNICS Kazan", "Avtodor", "Nizhny Novgorod", "Parma", "Samara", "Uralmash", "MBA Moscow",
             "Sydney Kings", "Melbourne United", "Perth Wildcats", "Brisbane Bullets", "Adelaide 36ers", "Cairns Taipans", "Illawarra Hawks", "SE Melbourne Phoenix", "Tasmania JackJumpers", "New Zealand Breakers"
         ],
         hockey: [
@@ -372,9 +403,12 @@
             "Ottawa Senators", "Philadelphia Flyers", "Pittsburgh Penguins", "San Jose Sharks", "Seattle Kraken", "St. Louis Blues", "Tampa Bay Lightning", "Toronto Maple Leafs", "Vancouver Canucks", "Vegas Golden Knights", "Washington Capitals", "Winnipeg Jets",
             "CSKA Moscow", "SKA Saint Petersburg", "Ak Bars Kazan", "Dynamo Moscow", "Metallurg Magnitogorsk", "Avangard Omsk", "Salavat Yulaev Ufa", "Traktor Chelyabinsk", "Lokomotiv Yaroslavl", "Severstal Cherepovets", "Torpedo Nizhny Novgorod", "Spartak Moscow", "Dynamo Minsk", "Barys Astana", "Avtomobilist Yekaterinburg", "Admiral Vladivostok", "Amur Khabarovsk", "Sibir Novosibirsk", "Neftekhimik Nizhnekamsk", "Vityaz Podolsk", "Sochi", "Kunlun Red Star", "Lada Togliatti",
             "Färjestad BK", "Frölunda HC", "Luleå HF", "Skellefteå AIK", "Växjö Lakers", "Rögle BK", "Örebro HK", "Leksands IF", "Malmö Redhawks", "HV71", "Tappara", "TPS", "HIFK", "Kärpät", "Lukko", "Ilves", "JYP", "HPK", "Ässät", "Sport",
-            "ZSC Lions", "SC Bern", "EV Zug", "HC Davos", "Fribourg-Gottéron", "Lausanne HC", "Genève-Servette", "HC Lugano", "EHC Biel", "SC Rapperswil-Jona", "Eisbären Berlin", "Red Bull Munich", "Adler Mannheim", "ERC Ingolstadt", "Straubing Tigers", "Kölner Haie", "Fischtown Pinguins", "Grizzlys Wolfsburg", "Nürnberg Ice Tigers", "Augsburger Panther",
-            "Oceláři Třinec", "Sparta Prague", "Slavia Prague", "Kometa Brno", "Pilsen", "Liberec", "Mountfield HK", "Vítkovice", "Olomouc", "Karlovy Vary", "Red Bull Salzburg", "KAC Klagenfurt", "Vienna Capitals", "Bolzano", "Villacher SV", "Graz 99ers", "HC Innsbruck", "Pioneers Vorarlberg", "Asiago", "Fehérvár AV19",
-            "Hershey Bears", "Chicago Wolves", "Coachella Valley Firebirds", "Providence Bruins", "Texas Stars", "Milwaukee Admirals", "Bakersfield Condors", "Cleveland Monsters", "Rochester Americans", "Utica Comets", "Rouen Dragons", "Grenoble Brûleurs de Loups", "Angers Ducs", "Bordeaux Boxers", "Amiens Gothiques", "Gap Rapaces", "Briançon Diables Rouges", "Nice Aigles", "Cergy-Pontoise Jokers", "Chamonix Pionniers"
+            "ZSC Lions", "SC Bern", "EV Zug", "HC Davos", "Fribourg-Gottéron", "Lausanne HC", "Genève-Servette", "HC Lugano", "EHC Biel", "SC Rapperswil-Jona",
+            "Eisbären Berlin", "Red Bull Munich", "Adler Mannheim", "ERC Ingolstadt", "Straubing Tigers", "Kölner Haie", "Fischtown Pinguins", "Grizzlys Wolfsburg", "Nürnberg Ice Tigers", "Augsburger Panther",
+            "Oceláři Třinec", "Sparta Prague", "Slavia Prague", "Kometa Brno", "Pilsen", "Liberec", "Mountfield HK", "Vítkovice", "Olomouc", "Karlovy Vary",
+            "Red Bull Salzburg", "KAC Klagenfurt", "Vienna Capitals", "Bolzano", "Villacher SV", "Graz 99ers", "HC Innsbruck", "Pioneers Vorarlberg", "Asiago", "Fehérvár AV19",
+            "Hershey Bears", "Chicago Wolves", "Coachella Valley Firebirds", "Providence Bruins", "Texas Stars", "Milwaukee Admirals", "Bakersfield Condors", "Cleveland Monsters", "Rochester Americans", "Utica Comets",
+            "Rouen Dragons", "Grenoble Brûleurs de Loups", "Angers Ducs", "Bordeaux Boxers", "Amiens Gothiques", "Gap Rapaces", "Briançon Diables Rouges", "Nice Aigles", "Cergy-Pontoise Jokers", "Chamonix Pionniers"
         ]
     };
 
@@ -383,6 +417,40 @@
     let historyDisplayLimit = 5;
     let historyAll = [];
 
+    // ================= FONCTIONS UTILITAIRES =================
+    function getSportConfig() {
+        // Configuration des marges selon le sport
+        if (currentSport === 'basket') {
+            return {
+                marginSmall: 5,      // Marge sécurisée pour basket
+                marginMedium: 10,    // Marge équilibrée
+                marginLarge: 5,      // Marge risquée (bas)
+                roundTo: 5,          // Arrondi au multiple de 5
+                unit: 'pts'
+            };
+        } else { // hockey
+            return {
+                marginSmall: 0.5,    // Marge sécurisée pour hockey
+                marginMedium: 1,     // Marge équilibrée
+                marginLarge: 0.5,    // Marge risquée
+                roundTo: 0.5,        // Arrondi au demi-but
+                unit: 'buts'
+            };
+        }
+    }
+
+    function roundToUnit(value, unit) {
+        return Math.ceil(value / unit) * unit;
+    }
+
+    function formatNumber(num, sport) {
+        if (sport === 'hockey') {
+            return num.toFixed(1);
+        }
+        return Math.round(num);
+    }
+
+    // ================= GESTION DU SPORT =================
     window.setSport = function(sport) {
         currentSport = sport;
         document.getElementById('btn-basket').classList.remove('active');
@@ -393,6 +461,7 @@
         document.getElementById('list-dom').style.display = 'none'; document.getElementById('list-ext').style.display = 'none';
     };
 
+    // ================= RECHERCHE =================
     window.searchTeams = function(type) {
         const inputId = type === 'dom' ? 'teamDom' : 'teamExt';
         const listId = type === 'dom' ? 'list-dom' : 'list-ext';
@@ -421,16 +490,18 @@
         }
     });
 
+    // ================= CALCUL TOTAUX =================
     window.calculateTotals = function() {
         for (let i = 1; i <= 5; i++) {
             const dom = parseFloat(document.getElementById('dom' + i).value) || 0;
             const ext = parseFloat(document.getElementById('ext' + i).value) || 0;
             const totalBox = document.getElementById('total' + i);
             if (dom === 0 && ext === 0) { totalBox.textContent = '-'; totalBox.classList.remove('filled'); }
-            else { totalBox.textContent = dom + ext; totalBox.classList.add('filled'); }
+            else { totalBox.textContent = formatNumber(dom + ext, currentSport); totalBox.classList.add('filled'); }
         }
     };
 
+    // ================= ANALYSE =================
     window.analyzeMatch = function() {
         const domScores = [], extScores = [], totals = [];
         const domName = document.getElementById('teamDom').value.trim() || 'Domicile';
@@ -439,7 +510,7 @@
         for (let i = 1; i <= 5; i++) {
             const domVal = parseFloat(document.getElementById('dom' + i).value);
             const extVal = parseFloat(document.getElementById('ext' + i).value);
-            if (!isNaN(domVal) && !isNaN(extVal) && domVal > 0 && extVal > 0) {
+            if (!isNaN(domVal) && !isNaN(extVal) && domVal >= 0 && extVal >= 0 && (domVal > 0 || extVal > 0)) {
                 domScores.push(domVal); extScores.push(extVal); totals.push(domVal + extVal);
             }
         }
@@ -447,22 +518,41 @@
         if (totals.length < 2) { alert("⚠️ Veuillez saisir au moins 2 matchs H2H complets pour lancer l'analyse."); return; }
 
         const domMin = Math.min(...domScores), domMax = Math.max(...domScores);
-        const domMoy = (domScores.reduce((a, b) => a + b, 0) / domScores.length).toFixed(1);
+        const domMoy = (domScores.reduce((a, b) => a + b, 0) / domScores.length);
         const extMin = Math.min(...extScores), extMax = Math.max(...extScores);
-        const extMoy = (extScores.reduce((a, b) => a + b, 0) / extScores.length).toFixed(1);
+        const extMoy = (extScores.reduce((a, b) => a + b, 0) / extScores.length);
         const totMin = Math.min(...totals), totMax = Math.max(...totals);
-        const totMoy = (totals.reduce((a, b) => a + b, 0) / totals.length).toFixed(1);
+        const totMoy = (totals.reduce((a, b) => a + b, 0) / totals.length);
 
         document.getElementById('res-dom-name').textContent = "🏠 " + domName;
         document.getElementById('res-ext-name').textContent = "🚌 " + extName;
-        document.getElementById('res-dom-min').textContent = domMin; document.getElementById('res-dom-max').textContent = domMax; document.getElementById('res-dom-moy').textContent = domMoy;
-        document.getElementById('res-ext-min').textContent = extMin; document.getElementById('res-ext-max').textContent = extMax; document.getElementById('res-ext-moy').textContent = extMoy;
-        document.getElementById('res-tot-min').textContent = totMin; document.getElementById('res-tot-max').textContent = totMax; document.getElementById('res-tot-moy').textContent = totMoy;
+        document.getElementById('res-dom-min').textContent = formatNumber(domMin, currentSport);
+        document.getElementById('res-dom-max').textContent = formatNumber(domMax, currentSport);
+        document.getElementById('res-dom-moy').textContent = formatNumber(domMoy, currentSport);
+        document.getElementById('res-ext-min').textContent = formatNumber(extMin, currentSport);
+        document.getElementById('res-ext-max').textContent = formatNumber(extMax, currentSport);
+        document.getElementById('res-ext-moy').textContent = formatNumber(extMoy, currentSport);
+        document.getElementById('res-tot-min').textContent = formatNumber(totMin, currentSport);
+        document.getElementById('res-tot-max').textContent = formatNumber(totMax, currentSport);
+        document.getElementById('res-tot-moy').textContent = formatNumber(totMoy, currentSport);
 
-        document.getElementById('prediction-section').innerHTML = generatePredictions(totMin, totMax, parseFloat(totMoy));
+        // Calcul des victoires
+        let domWins = 0, extWins = 0, draws = 0;
+        for (let i = 0; i < domScores.length; i++) {
+            if (domScores[i] > extScores[i]) domWins++;
+            else if (extScores[i] > domScores[i]) extWins++;
+            else draws++;
+        }
 
+        // Affichage section Dominance
+        document.getElementById('dominance-section').innerHTML = generateDominanceHTML(domName, extName, domWins, extWins, draws, domScores.length);
+        
+        // Affichage Prédictions
+        document.getElementById('prediction-section').innerHTML = generatePredictions(totMin, totMax, totMoy);
+
+        // Sauvegarder en mémoire
         currentAnalysis = {
-            sport: currentSport, domName, extName, domScores, extScores, totMin, totMax, totMoy,
+            sport: currentSport, domName, extName, domScores, extScores, totMin, totMax, totMoy, domWins, extWins, draws,
             date: new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
         };
 
@@ -470,20 +560,83 @@
         document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
     };
 
+    // ================= SECTION DOMINANCE H2H =================
+    function generateDominanceHTML(domName, extName, domWins, extWins, draws, totalMatches) {
+        const domPercent = totalMatches > 0 ? (domWins / totalMatches * 100) : 0;
+        const extPercent = totalMatches > 0 ? (extWins / totalMatches * 100) : 0;
+        
+        let verdictHTML = '';
+        if (domWins > extWins) {
+            verdictHTML = `<div class="dominance-verdict">👑 ${domName} domine les confrontations directes</div>`;
+        } else if (extWins > domWins) {
+            verdictHTML = `<div class="dominance-verdict ext-verdict">👑 ${extName} domine les confrontations directes</div>`;
+        } else {
+            verdictHTML = `<div class="dominance-verdict balanced-verdict">🤝 Égalité parfaite entre les deux équipes</div>`;
+        }
+
+        return `
+            <div class="dominance-title">🏆 DOMINANCE H2H</div>
+            <div class="dominance-bars">
+                <div class="dominance-row">
+                    <div class="dominance-label">
+                        <span class="team">🏠 ${domName}</span>
+                        <span class="wins">${domWins} victoire${domWins > 1 ? 's' : ''}</span>
+                    </div>
+                    <div class="dominance-bar-track">
+                        <div class="dominance-bar-fill dom" style="width: ${domPercent}%;"></div>
+                    </div>
+                </div>
+                <div class="dominance-row">
+                    <div class="dominance-label">
+                        <span class="team">🚌 ${extName}</span>
+                        <span class="wins">${extWins} victoire${extWins > 1 ? 's' : ''}</span>
+                    </div>
+                    <div class="dominance-bar-track">
+                        <div class="dominance-bar-fill ext" style="width: ${extPercent}%;"></div>
+                    </div>
+                </div>
+                ${draws > 0 ? `
+                <div class="dominance-row">
+                    <div class="dominance-label">
+                        <span class="team">🤝 Matchs nuls</span>
+                        <span class="wins">${draws}</span>
+                    </div>
+                    <div class="dominance-bar-track">
+                        <div class="dominance-bar-fill draw" style="width: ${(draws/totalMatches*100)}%;"></div>
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+            ${verdictHTML}
+        `;
+    }
+
+    // ================= PRÉDICTIONS ADAPTÉES AU SPORT =================
     function generatePredictions(min, max, moy) {
-        const secureLine = Math.ceil((max + 5) / 5) * 5;
-        const secureUnderPercent = 88; const secureOverPercent = 12;
-        const balancedLine = Math.ceil((moy + 10) / 5) * 5;
-        let balancedUnderPercent = Math.round(((max - balancedLine) / (max - min)) * 100);
-        if (balancedUnderPercent > 95) balancedUnderPercent = 95; if (balancedUnderPercent < 5) balancedUnderPercent = 5;
+        const config = getSportConfig();
+        const sport = currentSport;
+        
+        // SÉCURISÉ : Basé sur le MAX + petite marge
+        const secureLine = roundToUnit(max + config.marginSmall, config.roundTo);
+        const secureUnderPercent = 88;
+        const secureOverPercent = 12;
+
+        // ÉQUILIBRÉ : Basé sur la MOYENNE + marge moyenne
+        const balancedLine = roundToUnit(moy + config.marginMedium, config.roundTo);
+        let balancedUnderPercent = Math.round(((max - balancedLine) / (max - min || 1)) * 100);
+        if (balancedUnderPercent > 95) balancedUnderPercent = 95;
+        if (balancedUnderPercent < 5) balancedUnderPercent = 5;
         const balancedOverPercent = 100 - balancedUnderPercent;
-        const riskyLine = Math.floor((min - 5) / 5) * 5;
-        const riskyUnderPercent = 15; const riskyOverPercent = 85;
+
+        // RISQUÉ : Basé sur le MIN - marge
+        const riskyLine = Math.max(0, Math.floor((min - config.marginLarge) / config.roundTo) * config.roundTo);
+        const riskyUnderPercent = 15;
+        const riskyOverPercent = 85;
 
         return `
             <div class="prediction-card secure">
                 <div class="prediction-header"><div class="prediction-title">🟢 SÉCURISÉ</div></div>
-                <div class="prediction-line">Ligne proposée : ${secureLine} pts</div>
+                <div class="prediction-line">Ligne proposée : ${formatNumber(secureLine, sport)} ${config.unit}</div>
                 <div class="prediction-bars">
                     <div class="prediction-bar-item"><div class="prediction-bar-label">MOINS</div><div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${secureUnderPercent}%;"></div></div><div class="prediction-percent" style="color: #22c55e;">${secureUnderPercent}%</div></div>
                     <div class="prediction-bar-item"><div class="prediction-bar-label">PLUS</div><div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${secureOverPercent}%;"></div></div><div class="prediction-percent" style="color: #ef4444;">${secureOverPercent}%</div></div>
@@ -491,7 +644,7 @@
             </div>
             <div class="prediction-card balanced">
                 <div class="prediction-header"><div class="prediction-title">🟡 ÉQUILIBRÉ</div></div>
-                <div class="prediction-line">Ligne proposée : ${balancedLine} pts</div>
+                <div class="prediction-line">Ligne proposée : ${formatNumber(balancedLine, sport)} ${config.unit}</div>
                 <div class="prediction-bars">
                     <div class="prediction-bar-item"><div class="prediction-bar-label">MOINS</div><div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${balancedUnderPercent}%;"></div></div><div class="prediction-percent" style="color: #22c55e;">${balancedUnderPercent}%</div></div>
                     <div class="prediction-bar-item"><div class="prediction-bar-label">PLUS</div><div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${balancedOverPercent}%;"></div></div><div class="prediction-percent" style="color: #ef4444;">${balancedOverPercent}%</div></div>
@@ -499,7 +652,7 @@
             </div>
             <div class="prediction-card risky">
                 <div class="prediction-header"><div class="prediction-title">🔴 RISQUÉ</div></div>
-                <div class="prediction-line">Ligne proposée : ${riskyLine} pts</div>
+                <div class="prediction-line">Ligne proposée : ${formatNumber(riskyLine, sport)} ${config.unit}</div>
                 <div class="prediction-bars">
                     <div class="prediction-bar-item"><div class="prediction-bar-label">MOINS</div><div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${riskyUnderPercent}%;"></div></div><div class="prediction-percent" style="color: #22c55e;">${riskyUnderPercent}%</div></div>
                     <div class="prediction-bar-item"><div class="prediction-bar-label">PLUS</div><div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${riskyOverPercent}%;"></div></div><div class="prediction-percent" style="color: #ef4444;">${riskyOverPercent}%</div></div>
@@ -507,17 +660,19 @@
             </div>`;
     }
 
+    // ================= SAUVEGARDE =================
     window.saveToHistory = function() {
         if (!currentAnalysis) return;
-        let history = JSON.parse(localStorage.getItem('h2h_history_v5') || '[]');
+        let history = JSON.parse(localStorage.getItem('h2h_history_v6') || '[]');
         history.unshift(currentAnalysis);
-        localStorage.setItem('h2h_history_v5', JSON.stringify(history));
+        localStorage.setItem('h2h_history_v6', JSON.stringify(history));
         alert("✅ Analyse sauvegardée !");
         document.getElementById('teamDom').value = ''; document.getElementById('teamExt').value = '';
         for (let i = 1; i <= 5; i++) { document.getElementById('dom' + i).value = ''; document.getElementById('ext' + i).value = ''; }
         calculateTotals(); document.getElementById('results-section').style.display = 'none'; currentAnalysis = null;
     };
 
+    // ================= HISTORIQUE =================
     window.showHistory = function() {
         document.getElementById('page-analyze').style.display = 'none';
         document.getElementById('page-history').style.display = 'block';
@@ -530,7 +685,7 @@
     };
 
     function renderHistory() {
-        historyAll = JSON.parse(localStorage.getItem('h2h_history_v5') || '[]');
+        historyAll = JSON.parse(localStorage.getItem('h2h_history_v6') || '[]');
         const list = document.getElementById('history-list');
         const btnLoadMore = document.getElementById('btn-load-more');
         if (historyAll.length === 0) { list.innerHTML = '<div class="empty-history">Aucune analyse sauvegardée.</div>'; btnLoadMore.style.display = 'none'; return; }
@@ -539,10 +694,15 @@
         displayed.forEach((item, index) => {
             const div = document.createElement('div'); div.className = 'history-item';
             const sportIcon = item.sport === 'basket' ? '🏀' : '🏒';
+            const verdict = item.domWins > item.extWins ? item.domName : (item.extWins > item.domWins ? item.extName : 'Égalité');
             div.innerHTML = `
                 <div class="history-info">
                     <div class="history-teams">${sportIcon} ${item.domName} vs ${item.extName}</div>
-                    <div class="history-details"><span>${item.date}</span><span class="history-badge">Moy: ${item.totMoy}</span><span class="history-badge" style="background-color: rgba(255,215,0,0.15); color:#FFD700;">Max: ${item.totMax}</span></div>
+                    <div class="history-details">
+                        <span>${item.date}</span>
+                        <span class="history-badge">${item.domWins}-${item.extWins}</span>
+                        <span class="history-badge" style="background-color: rgba(34,197,94,0.15); color:#22c55e;">👑 ${verdict}</span>
+                    </div>
                 </div>
                 <div class="history-actions">
                     <button class="btn-icon btn-view" onclick="reloadAnalysis(${index})" title="Revoir">👁️</button>
@@ -557,12 +717,12 @@
 
     window.deleteHistoryItem = function(index) {
         if (!confirm("Voulez-vous vraiment supprimer cette analyse ?")) return;
-        let history = JSON.parse(localStorage.getItem('h2h_history_v5') || '[]');
-        history.splice(index, 1); localStorage.setItem('h2h_history_v5', JSON.stringify(history)); renderHistory();
+        let history = JSON.parse(localStorage.getItem('h2h_history_v6') || '[]');
+        history.splice(index, 1); localStorage.setItem('h2h_history_v6', JSON.stringify(history)); renderHistory();
     };
 
     window.reloadAnalysis = function(index) {
-        let history = JSON.parse(localStorage.getItem('h2h_history_v5') || '[]');
+        let history = JSON.parse(localStorage.getItem('h2h_history_v6') || '[]');
         const item = history[index]; if (!item) return;
         hideHistory(); setSport(item.sport);
         document.getElementById('teamDom').value = item.domName; document.getElementById('teamExt').value = item.extName;
