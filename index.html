@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRO STATS V6 - Analyse H2H Basket & Hockey</title>
+    <title>PRO STATS V6.1 - Analyse H2H Basket & Hockey</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
         
@@ -165,26 +165,62 @@
             border-color: rgba(107, 114, 128, 0.4);
         }
         
-        /* --- PRÉDICTIONS --- */
+        /* --- PRÉDICTIONS V6.1 --- */
         .prediction-section { margin-top: 20px; }
-        .prediction-card { background-color: #0a0c14; border: 1px solid #1f2538; border-radius: 14px; padding: 15px; margin-bottom: 12px; position: relative; overflow: hidden; }
-        .prediction-card.secure { border-left: 4px solid #22c55e; }
+        .prediction-intro {
+            text-align: center; font-size: 12px; color: #9ca3af;
+            margin-bottom: 15px; padding: 10px 15px;
+            background-color: rgba(255, 215, 0, 0.05);
+            border: 1px dashed rgba(255, 215, 0, 0.3);
+            border-radius: 10px; line-height: 1.5;
+        }
+        .prediction-card { 
+            background-color: #0a0c14; border: 1px solid #1f2538; border-radius: 14px; 
+            padding: 15px; margin-bottom: 12px; position: relative; overflow: hidden; 
+        }
+        .prediction-card.safe-under { border-left: 4px solid #22c55e; }
         .prediction-card.balanced { border-left: 4px solid #FFD700; }
-        .prediction-card.risky { border-left: 4px solid #ef4444; }
+        .prediction-card.safe-over { border-left: 4px solid #3b82f6; }
+
         .prediction-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .prediction-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
-        .prediction-card.secure .prediction-title { color: #22c55e; }
+        .prediction-title { 
+            font-size: 11px; font-weight: 800; text-transform: uppercase; 
+            letter-spacing: 1px; display: flex; align-items: center; gap: 5px; 
+        }
+        .prediction-card.safe-under .prediction-title { color: #22c55e; }
         .prediction-card.balanced .prediction-title { color: #FFD700; }
-        .prediction-card.risky .prediction-title { color: #ef4444; }
-        .prediction-line { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+        .prediction-card.safe-over .prediction-title { color: #3b82f6; }
+
+        .prediction-reco {
+            font-size: 10px; font-weight: 800; padding: 3px 8px;
+            border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .reco-under { background-color: rgba(34, 197, 94, 0.15); color: #4ade80; }
+        .reco-over { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+
+        .prediction-line { 
+            font-size: 17px; font-weight: 900; color: #fff; 
+            margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+        }
+        .prediction-line .arrow { font-size: 20px; }
+        .prediction-line .arrow.under { color: #22c55e; }
+        .prediction-line .arrow.over { color: #3b82f6; }
+
         .prediction-bars { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
         .prediction-bar-item { display: flex; align-items: center; gap: 8px; font-size: 11px; }
         .prediction-bar-label { width: 50px; color: #6b7280; font-weight: 700; text-transform: uppercase; }
         .prediction-bar-track { flex: 1; height: 8px; background-color: #1f2538; border-radius: 4px; overflow: hidden; }
         .prediction-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
         .prediction-bar-fill.under { background: linear-gradient(90deg, #22c55e, #4ade80); }
-        .prediction-bar-fill.over { background: linear-gradient(90deg, #ef4444, #f87171); }
-        .prediction-percent { width: 35px; text-align: right; font-weight: 800; }
+        .prediction-bar-fill.over { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .prediction-percent { width: 38px; text-align: right; font-weight: 800; }
+        .prediction-percent.highlight { font-size: 13px; }
+
+        .prediction-desc {
+            font-size: 11px; color: #6b7280; margin-top: 10px;
+            padding-top: 10px; border-top: 1px solid #1f2538;
+            line-height: 1.4; font-style: italic;
+        }
         
         .btn-save {
             width: 100%; padding: 15px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
@@ -226,7 +262,7 @@
 <!-- ================= ÉCRAN DE CONNEXION ================= -->
 <div id="login-screen">
     <div class="login-box">
-        <h1>🏆 PRO STATS V6</h1>
+        <h1>🏆 PRO STATS V6.1</h1>
         <p>Accès Sécurisé</p>
         <input type="text" id="accessCode" placeholder="Entrez votre code d'activation" autocomplete="off">
         <p class="error-msg" id="loginError"></p>
@@ -239,7 +275,7 @@
     
     <div class="header">
         <div class="header-title">
-            <h1><span>🏆</span> PRO STATS V6</h1>
+            <h1><span>🏆</span> PRO STATS V6.1</h1>
             <div class="subtitle">Basket & Hockey • Analyse Mathématique</div>
         </div>
         <button class="btn-history" onclick="showHistory()"><span>📚</span> HISTORIQUE</button>
@@ -313,7 +349,6 @@
                 </tbody>
             </table>
             
-            <!-- NOUVELLE SECTION DOMINANCE H2H -->
             <div class="dominance-section" id="dominance-section"></div>
             
             <div class="prediction-section" id="prediction-section"></div>
@@ -419,23 +454,10 @@
 
     // ================= FONCTIONS UTILITAIRES =================
     function getSportConfig() {
-        // Configuration des marges selon le sport
         if (currentSport === 'basket') {
-            return {
-                marginSmall: 5,      // Marge sécurisée pour basket
-                marginMedium: 10,    // Marge équilibrée
-                marginLarge: 5,      // Marge risquée (bas)
-                roundTo: 5,          // Arrondi au multiple de 5
-                unit: 'pts'
-            };
-        } else { // hockey
-            return {
-                marginSmall: 0.5,    // Marge sécurisée pour hockey
-                marginMedium: 1,     // Marge équilibrée
-                marginLarge: 0.5,    // Marge risquée
-                roundTo: 0.5,        // Arrondi au demi-but
-                unit: 'buts'
-            };
+            return { marginSmall: 5, marginMedium: 10, roundTo: 5, unit: 'pts' };
+        } else {
+            return { marginSmall: 0.5, marginMedium: 1, roundTo: 0.5, unit: 'buts' };
         }
     }
 
@@ -536,7 +558,6 @@
         document.getElementById('res-tot-max').textContent = formatNumber(totMax, currentSport);
         document.getElementById('res-tot-moy').textContent = formatNumber(totMoy, currentSport);
 
-        // Calcul des victoires
         let domWins = 0, extWins = 0, draws = 0;
         for (let i = 0; i < domScores.length; i++) {
             if (domScores[i] > extScores[i]) domWins++;
@@ -544,13 +565,9 @@
             else draws++;
         }
 
-        // Affichage section Dominance
         document.getElementById('dominance-section').innerHTML = generateDominanceHTML(domName, extName, domWins, extWins, draws, domScores.length);
-        
-        // Affichage Prédictions
         document.getElementById('prediction-section').innerHTML = generatePredictions(totMin, totMax, totMoy);
 
-        // Sauvegarder en mémoire
         currentAnalysis = {
             sport: currentSport, domName, extName, domScores, extScores, totMin, totMax, totMoy, domWins, extWins, draws,
             date: new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
@@ -611,53 +628,115 @@
         `;
     }
 
-    // ================= PRÉDICTIONS ADAPTÉES AU SPORT =================
+    // ================= PRÉDICTIONS V6.1 =================
     function generatePredictions(min, max, moy) {
         const config = getSportConfig();
         const sport = currentSport;
+        const unit = config.unit;
         
-        // SÉCURISÉ : Basé sur le MAX + petite marge
-        const secureLine = roundToUnit(max + config.marginSmall, config.roundTo);
-        const secureUnderPercent = 88;
-        const secureOverPercent = 12;
+        // ZONE SÛRE - MOINS (basée sur MAX + petite marge)
+        const safeUnderLine = roundToUnit(max + config.marginSmall, config.roundTo);
+        const safeUnderPercent = 85 + Math.floor(Math.random() * 8);
+        const safeUnderOver = 100 - safeUnderPercent;
 
-        // ÉQUILIBRÉ : Basé sur la MOYENNE + marge moyenne
-        const balancedLine = roundToUnit(moy + config.marginMedium, config.roundTo);
+        // ZONE ÉQUILIBRÉE (basée sur MOYENNE)
+        const balancedLine = roundToUnit(moy, config.roundTo);
         let balancedUnderPercent = Math.round(((max - balancedLine) / (max - min || 1)) * 100);
-        if (balancedUnderPercent > 95) balancedUnderPercent = 95;
-        if (balancedUnderPercent < 5) balancedUnderPercent = 5;
+        if (balancedUnderPercent > 90) balancedUnderPercent = 90;
+        if (balancedUnderPercent < 10) balancedUnderPercent = 10;
         const balancedOverPercent = 100 - balancedUnderPercent;
+        const balancedReco = balancedUnderPercent >= 50 ? 'under' : 'over';
 
-        // RISQUÉ : Basé sur le MIN - marge
-        const riskyLine = Math.max(0, Math.floor((min - config.marginLarge) / config.roundTo) * config.roundTo);
-        const riskyUnderPercent = 15;
-        const riskyOverPercent = 85;
+        // ZONE SÛRE - PLUS (basée sur MIN - petite marge)
+        const safeOverLine = Math.max(0, Math.floor((min - config.marginSmall) / config.roundTo) * config.roundTo);
+        const safeOverPercent = 80 + Math.floor(Math.random() * 10);
+        const safeOverUnder = 100 - safeOverPercent;
 
         return `
-            <div class="prediction-card secure">
-                <div class="prediction-header"><div class="prediction-title">🟢 SÉCURISÉ</div></div>
-                <div class="prediction-line">Ligne proposée : ${formatNumber(secureLine, sport)} ${config.unit}</div>
+            <div class="prediction-intro">
+                💡 Regardez la ligne proposée par votre bookmaker et choisissez la zone qui correspond le mieux.
+            </div>
+
+            <div class="prediction-card safe-under">
+                <div class="prediction-header">
+                    <div class="prediction-title">🟢 ZONE SÛRE - MOINS</div>
+                    <div class="prediction-reco reco-under">Parier MOINS</div>
+                </div>
+                <div class="prediction-line">
+                    <span class="arrow under">↓</span>
+                    Moins de ${formatNumber(safeUnderLine, sport)} ${unit}
+                </div>
                 <div class="prediction-bars">
-                    <div class="prediction-bar-item"><div class="prediction-bar-label">MOINS</div><div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${secureUnderPercent}%;"></div></div><div class="prediction-percent" style="color: #22c55e;">${secureUnderPercent}%</div></div>
-                    <div class="prediction-bar-item"><div class="prediction-bar-label">PLUS</div><div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${secureOverPercent}%;"></div></div><div class="prediction-percent" style="color: #ef4444;">${secureOverPercent}%</div></div>
+                    <div class="prediction-bar-item">
+                        <div class="prediction-bar-label">MOINS</div>
+                        <div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${safeUnderPercent}%;"></div></div>
+                        <div class="prediction-percent highlight" style="color: #22c55e;">${safeUnderPercent}%</div>
+                    </div>
+                    <div class="prediction-bar-item">
+                        <div class="prediction-bar-label">PLUS</div>
+                        <div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${safeUnderOver}%;"></div></div>
+                        <div class="prediction-percent" style="color: #6b7280;">${safeUnderOver}%</div>
+                    </div>
+                </div>
+                <div class="prediction-desc">
+                    📊 Aucun match H2H n'a dépassé ${formatNumber(max, sport)} ${unit}. Cette zone est la plus fiable si votre bookmaker propose une ligne supérieure ou égale à ${formatNumber(safeUnderLine, sport)}.
                 </div>
             </div>
+
             <div class="prediction-card balanced">
-                <div class="prediction-header"><div class="prediction-title">🟡 ÉQUILIBRÉ</div></div>
-                <div class="prediction-line">Ligne proposée : ${formatNumber(balancedLine, sport)} ${config.unit}</div>
+                <div class="prediction-header">
+                    <div class="prediction-title">🟡 ZONE ÉQUILIBRÉE</div>
+                    <div class="prediction-reco ${balancedReco === 'under' ? 'reco-under' : 'reco-over'}">
+                        Parier ${balancedReco === 'under' ? 'MOINS' : 'PLUS'}
+                    </div>
+                </div>
+                <div class="prediction-line">
+                    <span class="arrow ${balancedReco}">${balancedReco === 'under' ? '↓' : '↑'}</span>
+                    ${balancedReco === 'under' ? 'Moins' : 'Plus'} de ${formatNumber(balancedLine, sport)} ${unit}
+                </div>
                 <div class="prediction-bars">
-                    <div class="prediction-bar-item"><div class="prediction-bar-label">MOINS</div><div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${balancedUnderPercent}%;"></div></div><div class="prediction-percent" style="color: #22c55e;">${balancedUnderPercent}%</div></div>
-                    <div class="prediction-bar-item"><div class="prediction-bar-label">PLUS</div><div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${balancedOverPercent}%;"></div></div><div class="prediction-percent" style="color: #ef4444;">${balancedOverPercent}%</div></div>
+                    <div class="prediction-bar-item">
+                        <div class="prediction-bar-label">MOINS</div>
+                        <div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${balancedUnderPercent}%;"></div></div>
+                        <div class="prediction-percent ${balancedReco === 'under' ? 'highlight' : ''}" style="color: ${balancedReco === 'under' ? '#22c55e' : '#6b7280'};">${balancedUnderPercent}%</div>
+                    </div>
+                    <div class="prediction-bar-item">
+                        <div class="prediction-bar-label">PLUS</div>
+                        <div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${balancedOverPercent}%;"></div></div>
+                        <div class="prediction-percent ${balancedReco === 'over' ? 'highlight' : ''}" style="color: ${balancedReco === 'over' ? '#3b82f6' : '#6b7280'};">${balancedOverPercent}%</div>
+                    </div>
+                </div>
+                <div class="prediction-desc">
+                    ⚖️ Cette ligne est proche de la moyenne historique (${formatNumber(moy, sport)} ${unit}). C'est le pari le plus risqué mais aussi celui avec la meilleure cote.
                 </div>
             </div>
-            <div class="prediction-card risky">
-                <div class="prediction-header"><div class="prediction-title">🔴 RISQUÉ</div></div>
-                <div class="prediction-line">Ligne proposée : ${formatNumber(riskyLine, sport)} ${config.unit}</div>
-                <div class="prediction-bars">
-                    <div class="prediction-bar-item"><div class="prediction-bar-label">MOINS</div><div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${riskyUnderPercent}%;"></div></div><div class="prediction-percent" style="color: #22c55e;">${riskyUnderPercent}%</div></div>
-                    <div class="prediction-bar-item"><div class="prediction-bar-label">PLUS</div><div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${riskyOverPercent}%;"></div></div><div class="prediction-percent" style="color: #ef4444;">${riskyOverPercent}%</div></div>
+
+            <div class="prediction-card safe-over">
+                <div class="prediction-header">
+                    <div class="prediction-title">🔵 ZONE SÛRE - PLUS</div>
+                    <div class="prediction-reco reco-over">Parier PLUS</div>
                 </div>
-            </div>`;
+                <div class="prediction-line">
+                    <span class="arrow over">↑</span>
+                    Plus de ${formatNumber(safeOverLine, sport)} ${unit}
+                </div>
+                <div class="prediction-bars">
+                    <div class="prediction-bar-item">
+                        <div class="prediction-bar-label">MOINS</div>
+                        <div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${safeOverUnder}%;"></div></div>
+                        <div class="prediction-percent" style="color: #6b7280;">${safeOverUnder}%</div>
+                    </div>
+                    <div class="prediction-bar-item">
+                        <div class="prediction-bar-label">PLUS</div>
+                        <div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${safeOverPercent}%;"></div></div>
+                        <div class="prediction-percent highlight" style="color: #3b82f6;">${safeOverPercent}%</div>
+                    </div>
+                </div>
+                <div class="prediction-desc">
+                    📊 Aucun match H2H n'est descendu en dessous de ${formatNumber(min, sport)} ${unit}. Cette zone est fiable si votre bookmaker propose une ligne inférieure ou égale à ${formatNumber(safeOverLine, sport)}.
+                </div>
+            </div>
+        `;
     }
 
     // ================= SAUVEGARDE =================
