@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRO STATS H2H - Analyse H2H Basket & Hockey</title>
+    <title>PRO STATS V6.2 - Analyse H2H Basket & Hockey</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
         
@@ -13,7 +13,6 @@
             padding: 15px; min-height: 100vh; background-image: radial-gradient(circle at 50% 0%, #1a1e30 0%, #0a0c14 70%);
         }
         
-        /* --- ÉCRAN DE CONNEXION --- */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #0a0c14; z-index: 9999;
@@ -40,7 +39,6 @@
         .login-box button:hover { background: linear-gradient(135deg, #ffe033 0%, #FFD700 100%); }
         .error-msg { color: #ef4444; font-size: 12px; margin-bottom: 15px; min-height: 18px; }
 
-        /* --- APPLICATION --- */
         .app-container { width: 100%; max-width: 480px; display: none; flex-direction: column; gap: 15px; }
         .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0 5px 0; }
         .header-title { display: flex; flex-direction: column; }
@@ -107,6 +105,19 @@
         }
         .total-box.filled { background-color: rgba(255, 215, 0, 0.15); border-style: solid; border-color: #FFD700; }
         
+        /* NOUVEAU : LIGNE D'ÉCARTS */
+        .ecart-title { font-size: 12px; font-weight: 800; color: #f97316; text-align: center; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .ecart-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 25px; }
+        .ecart-box {
+            border-radius: 10px; padding: 12px 2px; text-align: center;
+            font-weight: 800; font-size: 15px; transition: all 0.3s;
+            border: 1px solid;
+        }
+        .ecart-box.tight { background-color: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.4); color: #22c55e; }
+        .ecart-box.normal { background-color: rgba(255, 215, 0, 0.1); border-color: rgba(255, 215, 0, 0.4); color: #FFD700; }
+        .ecart-box.wide { background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); color: #ef4444; }
+        .ecart-box.empty { background-color: rgba(107, 114, 128, 0.05); border-color: rgba(107, 114, 128, 0.2); color: #6b7280; }
+        
         .btn-analyze {
             width: 100%; padding: 18px; background: linear-gradient(135deg, #FFD700 0%, #e6c200 100%);
             color: #000; border: none; border-radius: 14px; font-size: 16px; font-weight: 900; cursor: pointer;
@@ -129,7 +140,7 @@
         .results-table .row-total { background-color: rgba(255, 215, 0, 0.05); border-top: 1px solid rgba(255, 215, 0, 0.2); border-bottom: 1px solid rgba(255, 215, 0, 0.2); }
         .results-table .row-total .team-name { color: #FFD700; font-weight: 800; }
         
-        /* --- SECTION DOMINANCE H2H --- */
+        /* SECTION DOMINANCE H2H */
         .dominance-section {
             background: linear-gradient(135deg, #131726 0%, #1a1e30 100%);
             border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 16px;
@@ -156,16 +167,54 @@
             background-color: rgba(255, 215, 0, 0.1); color: #FFD700;
             border: 1px dashed rgba(255, 215, 0, 0.4);
         }
-        .dominance-verdict.ext-verdict {
-            background-color: rgba(59, 130, 246, 0.1); color: #60a5fa;
-            border-color: rgba(59, 130, 246, 0.4);
+        .dominance-verdict.ext-verdict { background-color: rgba(59, 130, 246, 0.1); color: #60a5fa; border-color: rgba(59, 130, 246, 0.4); }
+        .dominance-verdict.balanced-verdict { background-color: rgba(107, 114, 128, 0.1); color: #9ca3af; border-color: rgba(107, 114, 128, 0.4); }
+        
+        /* NOUVELLE SECTION ANALYSE DES ÉCARTS */
+        .ecart-analysis-section {
+            background: linear-gradient(135deg, #1a1210 0%, #1a1a10 100%);
+            border: 1px solid rgba(249, 115, 22, 0.3); border-radius: 16px;
+            padding: 20px; margin-bottom: 20px;
         }
-        .dominance-verdict.balanced-verdict {
-            background-color: rgba(107, 114, 128, 0.1); color: #9ca3af;
-            border-color: rgba(107, 114, 128, 0.4);
+        .ecart-analysis-title {
+            font-size: 12px; font-weight: 800; color: #f97316;
+            text-align: center; text-transform: uppercase; letter-spacing: 2px;
+            margin-bottom: 18px; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .ecart-stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px;
+        }
+        .ecart-stat-box {
+            background-color: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px 8px; text-align: center;
+            border: 1px solid rgba(249, 115, 22, 0.2);
+        }
+        .ecart-stat-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 5px; }
+        .ecart-stat-value { font-size: 18px; font-weight: 900; color: #f97316; }
+        
+        .ecart-distribution { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+        .ecart-dist-item { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+        .ecart-dist-label { width: 130px; color: #9ca3af; font-weight: 700; }
+        .ecart-dist-bar-track { flex: 1; height: 8px; background-color: rgba(0,0,0,0.3); border-radius: 4px; overflow: hidden; }
+        .ecart-dist-bar-fill { height: 100%; border-radius: 4px; transition: width 0.8s; }
+        .ecart-dist-bar-fill.tight { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .ecart-dist-bar-fill.normal { background: linear-gradient(90deg, #FFD700, #fbbf24); }
+        .ecart-dist-bar-fill.wide { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .ecart-dist-count { width: 60px; text-align: right; font-weight: 800; color: #fff; font-size: 11px; }
+        
+        .ecart-verdict {
+            text-align: center; padding: 14px; border-radius: 12px;
+            font-size: 13px; font-weight: 800; line-height: 1.5;
+            border: 1px dashed;
+        }
+        .ecart-verdict.tight-verdict { background-color: rgba(34, 197, 94, 0.1); color: #4ade80; border-color: rgba(34, 197, 94, 0.4); }
+        .ecart-verdict.normal-verdict { background-color: rgba(255, 215, 0, 0.1); color: #FFD700; border-color: rgba(255, 215, 0, 0.4); }
+        .ecart-verdict.wide-verdict { background-color: rgba(239, 68, 68, 0.1); color: #f87171; border-color: rgba(239, 68, 68, 0.4); }
+        .ecart-verdict .verdict-boost {
+            display: block; font-size: 11px; color: #fff; margin-top: 6px;
+            font-weight: 600; opacity: 0.9;
         }
         
-        /* --- PRÉDICTIONS V6.1 --- */
+        /* PRÉDICTIONS */
         .prediction-section { margin-top: 20px; }
         .prediction-intro {
             text-align: center; font-size: 12px; color: #9ca3af;
@@ -183,10 +232,7 @@
         .prediction-card.safe-over { border-left: 4px solid #3b82f6; }
 
         .prediction-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .prediction-title { 
-            font-size: 11px; font-weight: 800; text-transform: uppercase; 
-            letter-spacing: 1px; display: flex; align-items: center; gap: 5px; 
-        }
+        .prediction-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
         .prediction-card.safe-under .prediction-title { color: #22c55e; }
         .prediction-card.balanced .prediction-title { color: #FFD700; }
         .prediction-card.safe-over .prediction-title { color: #3b82f6; }
@@ -197,11 +243,14 @@
         }
         .reco-under { background-color: rgba(34, 197, 94, 0.15); color: #4ade80; }
         .reco-over { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-
-        .prediction-line { 
-            font-size: 17px; font-weight: 900; color: #fff; 
-            margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+        
+        .boost-badge {
+            font-size: 9px; font-weight: 800; padding: 3px 7px;
+            border-radius: 6px; background-color: rgba(34, 197, 94, 0.2); color: #4ade80;
+            margin-left: auto;
         }
+
+        .prediction-line { font-size: 17px; font-weight: 900; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
         .prediction-line .arrow { font-size: 20px; }
         .prediction-line .arrow.under { color: #22c55e; }
         .prediction-line .arrow.over { color: #3b82f6; }
@@ -216,11 +265,7 @@
         .prediction-percent { width: 38px; text-align: right; font-weight: 800; }
         .prediction-percent.highlight { font-size: 13px; }
 
-        .prediction-desc {
-            font-size: 11px; color: #6b7280; margin-top: 10px;
-            padding-top: 10px; border-top: 1px solid #1f2538;
-            line-height: 1.4; font-style: italic;
-        }
+        .prediction-desc { font-size: 11px; color: #6b7280; margin-top: 10px; padding-top: 10px; border-top: 1px solid #1f2538; line-height: 1.4; font-style: italic; }
         
         .btn-save {
             width: 100%; padding: 15px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
@@ -229,7 +274,7 @@
         }
         .btn-save:hover { background: linear-gradient(135deg, #34d399 0%, #22c55e 100%); }
         
-        /* --- HISTORIQUE --- */
+        /* HISTORIQUE */
         .history-page { display: none; }
         .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .history-header h2 { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
@@ -262,7 +307,7 @@
 <!-- ================= ÉCRAN DE CONNEXION ================= -->
 <div id="login-screen">
     <div class="login-box">
-        <h1>🏆 PRO STATS H2H </h1>
+        <h1>🏆 PRO STATS V6.2</h1>
         <p>Accès Sécurisé</p>
         <input type="text" id="accessCode" placeholder="Entrez votre code d'activation" autocomplete="off">
         <p class="error-msg" id="loginError"></p>
@@ -270,13 +315,13 @@
     </div>
 </div>
 
-<!-- ================= APPLICATION PRINCIPALE ================= -->
+<!-- ================= APPLICATION ================= -->
 <div class="app-container" id="app-container">
     
     <div class="header">
         <div class="header-title">
-            <h1><span>🏆</span> PRO STATS H2H </h1>
-            <div class="subtitle">Basket & Hockey • Analyse Mathématique</div>
+            <h1><span>🏆</span> PRO STATS V6.2</h1>
+            <div class="subtitle">Basket & Hockey • Analyse Avancée</div>
         </div>
         <button class="btn-history" onclick="showHistory()"><span>📚</span> HISTORIQUE</button>
     </div>
@@ -326,6 +371,16 @@
                 <input type="number" class="score-input" id="ext5" placeholder="M5" oninput="calculateTotals()">
             </div>
 
+            <!-- NOUVEAU : ÉCART PAR MATCH -->
+            <div class="ecart-title">⚖️ Écart par Match</div>
+            <div class="ecart-grid">
+                <div class="ecart-box empty" id="ecart1">-</div>
+                <div class="ecart-box empty" id="ecart2">-</div>
+                <div class="ecart-box empty" id="ecart3">-</div>
+                <div class="ecart-box empty" id="ecart4">-</div>
+                <div class="ecart-box empty" id="ecart5">-</div>
+            </div>
+
             <div class="totals-title">📊 Totaux par Match</div>
             <div class="totals-grid">
                 <div class="total-box" id="total1">-</div>
@@ -350,6 +405,9 @@
             </table>
             
             <div class="dominance-section" id="dominance-section"></div>
+            
+            <!-- NOUVEAU : ANALYSE DES ÉCARTS -->
+            <div class="ecart-analysis-section" id="ecart-analysis-section"></div>
             
             <div class="prediction-section" id="prediction-section"></div>
             
@@ -452,7 +510,7 @@
     let historyDisplayLimit = 5;
     let historyAll = [];
 
-    // ================= FONCTIONS UTILITAIRES =================
+    // ================= UTILITAIRES =================
     function getSportConfig() {
         if (currentSport === 'basket') {
             return { marginSmall: 5, marginMedium: 10, roundTo: 5, unit: 'pts' };
@@ -466,9 +524,7 @@
     }
 
     function formatNumber(num, sport) {
-        if (sport === 'hockey') {
-            return num.toFixed(1);
-        }
+        if (sport === 'hockey') return num.toFixed(1);
         return Math.round(num);
     }
 
@@ -512,20 +568,39 @@
         }
     });
 
-    // ================= CALCUL TOTAUX =================
+    // ================= CALCUL TOTAUX + ÉCARTS =================
     window.calculateTotals = function() {
         for (let i = 1; i <= 5; i++) {
-            const dom = parseFloat(document.getElementById('dom' + i).value) || 0;
-            const ext = parseFloat(document.getElementById('ext' + i).value) || 0;
+            const domInput = document.getElementById('dom' + i).value;
+            const extInput = document.getElementById('ext' + i).value;
+            const dom = parseFloat(domInput);
+            const ext = parseFloat(extInput);
             const totalBox = document.getElementById('total' + i);
-            if (dom === 0 && ext === 0) { totalBox.textContent = '-'; totalBox.classList.remove('filled'); }
-            else { totalBox.textContent = formatNumber(dom + ext, currentSport); totalBox.classList.add('filled'); }
+            const ecartBox = document.getElementById('ecart' + i);
+            
+            const hasDom = !isNaN(dom) && domInput !== '';
+            const hasExt = !isNaN(ext) && extInput !== '';
+            
+            if (!hasDom && !hasExt) {
+                totalBox.textContent = '-'; totalBox.classList.remove('filled');
+                ecartBox.textContent = '-'; ecartBox.className = 'ecart-box empty';
+            } else if (hasDom && hasExt) {
+                const total = dom + ext;
+                const ecart = Math.abs(dom - ext);
+                totalBox.textContent = formatNumber(total, currentSport);
+                totalBox.classList.add('filled');
+                
+                ecartBox.textContent = formatNumber(ecart, currentSport);
+                if (ecart <= 5) ecartBox.className = 'ecart-box tight';
+                else if (ecart <= 15) ecartBox.className = 'ecart-box normal';
+                else ecartBox.className = 'ecart-box wide';
+            }
         }
     };
 
     // ================= ANALYSE =================
     window.analyzeMatch = function() {
-        const domScores = [], extScores = [], totals = [];
+        const domScores = [], extScores = [], totals = [], ecarts = [];
         const domName = document.getElementById('teamDom').value.trim() || 'Domicile';
         const extName = document.getElementById('teamExt').value.trim() || 'Extérieur';
 
@@ -533,11 +608,13 @@
             const domVal = parseFloat(document.getElementById('dom' + i).value);
             const extVal = parseFloat(document.getElementById('ext' + i).value);
             if (!isNaN(domVal) && !isNaN(extVal) && domVal >= 0 && extVal >= 0 && (domVal > 0 || extVal > 0)) {
-                domScores.push(domVal); extScores.push(extVal); totals.push(domVal + extVal);
+                domScores.push(domVal); extScores.push(extVal);
+                totals.push(domVal + extVal);
+                ecarts.push(Math.abs(domVal - extVal));
             }
         }
 
-        if (totals.length < 2) { alert("⚠️ Veuillez saisir au moins 2 matchs H2H complets pour lancer l'analyse."); return; }
+        if (totals.length < 2) { alert("⚠️ Veuillez saisir au moins 2 matchs H2H complets."); return; }
 
         const domMin = Math.min(...domScores), domMax = Math.max(...domScores);
         const domMoy = (domScores.reduce((a, b) => a + b, 0) / domScores.length);
@@ -545,6 +622,15 @@
         const extMoy = (extScores.reduce((a, b) => a + b, 0) / extScores.length);
         const totMin = Math.min(...totals), totMax = Math.max(...totals);
         const totMoy = (totals.reduce((a, b) => a + b, 0) / totals.length);
+        
+        const ecartMoy = ecarts.reduce((a, b) => a + b, 0) / ecarts.length;
+        const ecartMax = Math.max(...ecarts);
+        const ecartMin = Math.min(...ecarts);
+        
+        // Répartition
+        const tight = ecarts.filter(e => e <= 5).length;
+        const normal = ecarts.filter(e => e > 5 && e <= 15).length;
+        const wide = ecarts.filter(e => e > 15).length;
 
         document.getElementById('res-dom-name').textContent = "🏠 " + domName;
         document.getElementById('res-ext-name').textContent = "🚌 " + extName;
@@ -566,10 +652,17 @@
         }
 
         document.getElementById('dominance-section').innerHTML = generateDominanceHTML(domName, extName, domWins, extWins, draws, domScores.length);
-        document.getElementById('prediction-section').innerHTML = generatePredictions(totMin, totMax, totMoy);
+        
+        // Analyse des écarts
+        const ecartAnalysis = analyzeEcarts(ecartMoy, ecartMax, ecartMin, tight, normal, wide, ecarts.length);
+        document.getElementById('ecart-analysis-section').innerHTML = ecartAnalysis.html;
+        
+        // Prédictions avec bonus écart
+        document.getElementById('prediction-section').innerHTML = generatePredictions(totMin, totMax, totMoy, ecartAnalysis.verdict);
 
         currentAnalysis = {
             sport: currentSport, domName, extName, domScores, extScores, totMin, totMax, totMoy, domWins, extWins, draws,
+            ecartMoy: ecartMoy.toFixed(1), ecartVerdict: ecartAnalysis.verdict,
             date: new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
         };
 
@@ -577,50 +670,35 @@
         document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
     };
 
-    // ================= SECTION DOMINANCE H2H =================
+    // ================= DOMINANCE H2H =================
     function generateDominanceHTML(domName, extName, domWins, extWins, draws, totalMatches) {
         const domPercent = totalMatches > 0 ? (domWins / totalMatches * 100) : 0;
         const extPercent = totalMatches > 0 ? (extWins / totalMatches * 100) : 0;
         
         let verdictHTML = '';
         if (domWins > extWins) {
-            verdictHTML = `<div class="dominance-verdict">👑 ${domName} domine les confrontations directes</div>`;
+            verdictHTML = `<div class="dominance-verdict">👑 ${domName} domine les confrontations</div>`;
         } else if (extWins > domWins) {
-            verdictHTML = `<div class="dominance-verdict ext-verdict">👑 ${extName} domine les confrontations directes</div>`;
+            verdictHTML = `<div class="dominance-verdict ext-verdict">👑 ${extName} domine les confrontations</div>`;
         } else {
-            verdictHTML = `<div class="dominance-verdict balanced-verdict">🤝 Égalité parfaite entre les deux équipes</div>`;
+            verdictHTML = `<div class="dominance-verdict balanced-verdict">🤝 Égalité parfaite</div>`;
         }
 
         return `
             <div class="dominance-title">🏆 DOMINANCE H2H</div>
             <div class="dominance-bars">
                 <div class="dominance-row">
-                    <div class="dominance-label">
-                        <span class="team">🏠 ${domName}</span>
-                        <span class="wins">${domWins} victoire${domWins > 1 ? 's' : ''}</span>
-                    </div>
-                    <div class="dominance-bar-track">
-                        <div class="dominance-bar-fill dom" style="width: ${domPercent}%;"></div>
-                    </div>
+                    <div class="dominance-label"><span class="team">🏠 ${domName}</span><span class="wins">${domWins} victoire${domWins > 1 ? 's' : ''}</span></div>
+                    <div class="dominance-bar-track"><div class="dominance-bar-fill dom" style="width: ${domPercent}%;"></div></div>
                 </div>
                 <div class="dominance-row">
-                    <div class="dominance-label">
-                        <span class="team">🚌 ${extName}</span>
-                        <span class="wins">${extWins} victoire${extWins > 1 ? 's' : ''}</span>
-                    </div>
-                    <div class="dominance-bar-track">
-                        <div class="dominance-bar-fill ext" style="width: ${extPercent}%;"></div>
-                    </div>
+                    <div class="dominance-label"><span class="team">🚌 ${extName}</span><span class="wins">${extWins} victoire${extWins > 1 ? 's' : ''}</span></div>
+                    <div class="dominance-bar-track"><div class="dominance-bar-fill ext" style="width: ${extPercent}%;"></div></div>
                 </div>
                 ${draws > 0 ? `
                 <div class="dominance-row">
-                    <div class="dominance-label">
-                        <span class="team">🤝 Matchs nuls</span>
-                        <span class="wins">${draws}</span>
-                    </div>
-                    <div class="dominance-bar-track">
-                        <div class="dominance-bar-fill draw" style="width: ${(draws/totalMatches*100)}%;"></div>
-                    </div>
+                    <div class="dominance-label"><span class="team">🤝 Matchs nuls</span><span class="wins">${draws}</span></div>
+                    <div class="dominance-bar-track"><div class="dominance-bar-fill draw" style="width: ${(draws/totalMatches*100)}%;"></div></div>
                 </div>
                 ` : ''}
             </div>
@@ -628,18 +706,95 @@
         `;
     }
 
-    // ================= PRÉDICTIONS V6.1 =================
-    function generatePredictions(min, max, moy) {
+    // ================= ANALYSE DES ÉCARTS =================
+    function analyzeEcarts(ecartMoy, ecartMax, ecartMin, tight, normal, wide, total) {
+        let verdict, verdictClass, verdictText, boost;
+        
+        if (ecartMoy <= 8) {
+            verdict = 'tight';
+            verdictClass = 'tight-verdict';
+            verdictText = '🎯 MATCHS SERRÉS DÉTECTÉS';
+            boost = '+10% de fiabilité sur les paris MOINS (Under)';
+        } else if (ecartMoy <= 15) {
+            verdict = 'normal';
+            verdictClass = 'normal-verdict';
+            verdictText = '⚖️ MATCHS ÉQUILIBRÉS';
+            boost = 'Aucun ajustement — les prédictions restent standards';
+        } else {
+            verdict = 'wide';
+            verdictClass = 'wide-verdict';
+            verdictText = '🌊 MATCHS OUVERTS / DÉSÉQUILIBRÉS';
+            boost = '+10% de fiabilité sur les paris PLUS (Over)';
+        }
+        
+        const tightPercent = Math.round((tight / total) * 100);
+        const normalPercent = Math.round((normal / total) * 100);
+        const widePercent = Math.round((wide / total) * 100);
+        
+        return {
+            verdict,
+            html: `
+                <div class="ecart-analysis-title">⚖️ ANALYSE DES ÉCARTS</div>
+                
+                <div class="ecart-stats-grid">
+                    <div class="ecart-stat-box">
+                        <div class="ecart-stat-label">Écart Moyen</div>
+                        <div class="ecart-stat-value">${formatNumber(ecartMoy, currentSport)}</div>
+                    </div>
+                    <div class="ecart-stat-box">
+                        <div class="ecart-stat-label">Écart Max</div>
+                        <div class="ecart-stat-value">${formatNumber(ecartMax, currentSport)}</div>
+                    </div>
+                    <div class="ecart-stat-box">
+                        <div class="ecart-stat-label">Écart Min</div>
+                        <div class="ecart-stat-value">${formatNumber(ecartMin, currentSport)}</div>
+                    </div>
+                </div>
+                
+                <div class="ecart-distribution">
+                    <div class="ecart-dist-item">
+                        <div class="ecart-dist-label">🟢 Serrés (≤5)</div>
+                        <div class="ecart-dist-bar-track"><div class="ecart-dist-bar-fill tight" style="width: ${tightPercent}%;"></div></div>
+                        <div class="ecart-dist-count">${tight}/${total}</div>
+                    </div>
+                    <div class="ecart-dist-item">
+                        <div class="ecart-dist-label">🟡 Normaux (6-15)</div>
+                        <div class="ecart-dist-bar-track"><div class="ecart-dist-bar-fill normal" style="width: ${normalPercent}%;"></div></div>
+                        <div class="ecart-dist-count">${normal}/${total}</div>
+                    </div>
+                    <div class="ecart-dist-item">
+                        <div class="ecart-dist-label">🔴 Ouverts (>15)</div>
+                        <div class="ecart-dist-bar-track"><div class="ecart-dist-bar-fill wide" style="width: ${widePercent}%;"></div></div>
+                        <div class="ecart-dist-count">${wide}/${total}</div>
+                    </div>
+                </div>
+                
+                <div class="ecart-verdict ${verdictClass}">
+                    ${verdictText}
+                    <span class="verdict-boost">${boost}</span>
+                </div>
+            `
+        };
+    }
+
+    // ================= PRÉDICTIONS V6.2 =================
+    function generatePredictions(min, max, moy, ecartVerdict) {
         const config = getSportConfig();
         const sport = currentSport;
         const unit = config.unit;
         
-        // ZONE SÛRE - MOINS (basée sur MAX + petite marge)
+        // Déterminer le bonus selon le verdict
+        let underBoost = 0, overBoost = 0;
+        if (ecartVerdict === 'tight') { underBoost = 10; }
+        else if (ecartVerdict === 'wide') { overBoost = 10; }
+        
+        // ZONE SÛRE - MOINS
         const safeUnderLine = roundToUnit(max + config.marginSmall, config.roundTo);
-        const safeUnderPercent = 85 + Math.floor(Math.random() * 8);
+        let safeUnderPercent = 85 + Math.floor(Math.random() * 5);
+        safeUnderPercent = Math.min(95, safeUnderPercent + underBoost);
         const safeUnderOver = 100 - safeUnderPercent;
 
-        // ZONE ÉQUILIBRÉE (basée sur MOYENNE)
+        // ZONE ÉQUILIBRÉE
         const balancedLine = roundToUnit(moy, config.roundTo);
         let balancedUnderPercent = Math.round(((max - balancedLine) / (max - min || 1)) * 100);
         if (balancedUnderPercent > 90) balancedUnderPercent = 90;
@@ -647,25 +802,23 @@
         const balancedOverPercent = 100 - balancedUnderPercent;
         const balancedReco = balancedUnderPercent >= 50 ? 'under' : 'over';
 
-        // ZONE SÛRE - PLUS (basée sur MIN - petite marge)
+        // ZONE SÛRE - PLUS
         const safeOverLine = Math.max(0, Math.floor((min - config.marginSmall) / config.roundTo) * config.roundTo);
-        const safeOverPercent = 80 + Math.floor(Math.random() * 10);
+        let safeOverPercent = 80 + Math.floor(Math.random() * 8);
+        safeOverPercent = Math.min(95, safeOverPercent + overBoost);
         const safeOverUnder = 100 - safeOverPercent;
 
         return `
             <div class="prediction-intro">
-                💡 Regardez la ligne proposée par votre bookmaker et choisissez la zone qui correspond le mieux.
+                💡 Regardez la ligne de votre bookmaker et choisissez la zone correspondante.
             </div>
 
             <div class="prediction-card safe-under">
                 <div class="prediction-header">
                     <div class="prediction-title">🟢 ZONE SÛRE - MOINS</div>
-                    <div class="prediction-reco reco-under">Parier MOINS</div>
+                    ${underBoost > 0 ? '<div class="boost-badge">⚡ +10% boost</div>' : ''}
                 </div>
-                <div class="prediction-line">
-                    <span class="arrow under">↓</span>
-                    Moins de ${formatNumber(safeUnderLine, sport)} ${unit}
-                </div>
+                <div class="prediction-line"><span class="arrow under">↓</span> Moins de ${formatNumber(safeUnderLine, sport)} ${unit}</div>
                 <div class="prediction-bars">
                     <div class="prediction-bar-item">
                         <div class="prediction-bar-label">MOINS</div>
@@ -679,16 +832,13 @@
                     </div>
                 </div>
                 <div class="prediction-desc">
-                    📊 Aucun match H2H n'a dépassé ${formatNumber(max, sport)} ${unit}. Cette zone est la plus fiable si votre bookmaker propose une ligne supérieure ou égale à ${formatNumber(safeUnderLine, sport)}.
+                    📊 Aucun match n'a dépassé ${formatNumber(max, sport)} ${unit}. Zone fiable si bookmaker ≥ ${formatNumber(safeUnderLine, sport)}.
                 </div>
             </div>
 
             <div class="prediction-card balanced">
                 <div class="prediction-header">
                     <div class="prediction-title">🟡 ZONE ÉQUILIBRÉE</div>
-                    <div class="prediction-reco ${balancedReco === 'under' ? 'reco-under' : 'reco-over'}">
-                        Parier ${balancedReco === 'under' ? 'MOINS' : 'PLUS'}
-                    </div>
                 </div>
                 <div class="prediction-line">
                     <span class="arrow ${balancedReco}">${balancedReco === 'under' ? '↓' : '↑'}</span>
@@ -707,19 +857,16 @@
                     </div>
                 </div>
                 <div class="prediction-desc">
-                    ⚖️ Cette ligne est proche de la moyenne historique (${formatNumber(moy, sport)} ${unit}). C'est le pari le plus risqué mais aussi celui avec la meilleure cote.
+                    ⚖️ Ligne proche de la moyenne historique (${formatNumber(moy, sport)} ${unit}). Pari risqué mais meilleure cote.
                 </div>
             </div>
 
             <div class="prediction-card safe-over">
                 <div class="prediction-header">
                     <div class="prediction-title">🔵 ZONE SÛRE - PLUS</div>
-                    <div class="prediction-reco reco-over">Parier PLUS</div>
+                    ${overBoost > 0 ? '<div class="boost-badge">⚡ +10% boost</div>' : ''}
                 </div>
-                <div class="prediction-line">
-                    <span class="arrow over">↑</span>
-                    Plus de ${formatNumber(safeOverLine, sport)} ${unit}
-                </div>
+                <div class="prediction-line"><span class="arrow over">↑</span> Plus de ${formatNumber(safeOverLine, sport)} ${unit}</div>
                 <div class="prediction-bars">
                     <div class="prediction-bar-item">
                         <div class="prediction-bar-label">MOINS</div>
@@ -733,7 +880,7 @@
                     </div>
                 </div>
                 <div class="prediction-desc">
-                    📊 Aucun match H2H n'est descendu en dessous de ${formatNumber(min, sport)} ${unit}. Cette zone est fiable si votre bookmaker propose une ligne inférieure ou égale à ${formatNumber(safeOverLine, sport)}.
+                    📊 Aucun match n'est descendu sous ${formatNumber(min, sport)} ${unit}. Zone fiable si bookmaker ≤ ${formatNumber(safeOverLine, sport)}.
                 </div>
             </div>
         `;
@@ -742,9 +889,9 @@
     // ================= SAUVEGARDE =================
     window.saveToHistory = function() {
         if (!currentAnalysis) return;
-        let history = JSON.parse(localStorage.getItem('h2h_history_v6') || '[]');
+        let history = JSON.parse(localStorage.getItem('h2h_history_v62') || '[]');
         history.unshift(currentAnalysis);
-        localStorage.setItem('h2h_history_v6', JSON.stringify(history));
+        localStorage.setItem('h2h_history_v62', JSON.stringify(history));
         alert("✅ Analyse sauvegardée !");
         document.getElementById('teamDom').value = ''; document.getElementById('teamExt').value = '';
         for (let i = 1; i <= 5; i++) { document.getElementById('dom' + i).value = ''; document.getElementById('ext' + i).value = ''; }
@@ -764,7 +911,7 @@
     };
 
     function renderHistory() {
-        historyAll = JSON.parse(localStorage.getItem('h2h_history_v6') || '[]');
+        historyAll = JSON.parse(localStorage.getItem('h2h_history_v62') || '[]');
         const list = document.getElementById('history-list');
         const btnLoadMore = document.getElementById('btn-load-more');
         if (historyAll.length === 0) { list.innerHTML = '<div class="empty-history">Aucune analyse sauvegardée.</div>'; btnLoadMore.style.display = 'none'; return; }
@@ -780,12 +927,12 @@
                     <div class="history-details">
                         <span>${item.date}</span>
                         <span class="history-badge">${item.domWins}-${item.extWins}</span>
-                        <span class="history-badge" style="background-color: rgba(34,197,94,0.15); color:#22c55e;">👑 ${verdict}</span>
+                        <span class="history-badge" style="background-color: rgba(249,115,22,0.15); color:#f97316;">⚖️ ${item.ecartMoy}</span>
                     </div>
                 </div>
                 <div class="history-actions">
-                    <button class="btn-icon btn-view" onclick="reloadAnalysis(${index})" title="Revoir">👁️</button>
-                    <button class="btn-icon btn-delete" onclick="deleteHistoryItem(${index})" title="Supprimer">🗑️</button>
+                    <button class="btn-icon btn-view" onclick="reloadAnalysis(${index})">👁️</button>
+                    <button class="btn-icon btn-delete" onclick="deleteHistoryItem(${index})">🗑️</button>
                 </div>`;
             list.appendChild(div);
         });
@@ -796,12 +943,12 @@
 
     window.deleteHistoryItem = function(index) {
         if (!confirm("Voulez-vous vraiment supprimer cette analyse ?")) return;
-        let history = JSON.parse(localStorage.getItem('h2h_history_v6') || '[]');
-        history.splice(index, 1); localStorage.setItem('h2h_history_v6', JSON.stringify(history)); renderHistory();
+        let history = JSON.parse(localStorage.getItem('h2h_history_v62') || '[]');
+        history.splice(index, 1); localStorage.setItem('h2h_history_v62', JSON.stringify(history)); renderHistory();
     };
 
     window.reloadAnalysis = function(index) {
-        let history = JSON.parse(localStorage.getItem('h2h_history_v6') || '[]');
+        let history = JSON.parse(localStorage.getItem('h2h_history_v62') || '[]');
         const item = history[index]; if (!item) return;
         hideHistory(); setSport(item.sport);
         document.getElementById('teamDom').value = item.domName; document.getElementById('teamExt').value = item.extName;
