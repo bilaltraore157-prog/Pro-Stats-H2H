@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRO STATS H2H - Analyse H2H Basket & Hockey</title>
+    <title>PRO STATS H2H - Analyse H2H Avancée</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
         
@@ -97,6 +97,14 @@
         .score-input:focus { border-color: #FFD700; background-color: #131726; }
         .score-input::placeholder { color: #374151; font-weight: 400; font-size: 13px; }
         
+        .ecart-title { font-size: 12px; font-weight: 800; color: #f97316; text-align: center; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .ecart-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 25px; }
+        .ecart-box { border-radius: 10px; padding: 12px 2px; text-align: center; font-weight: 800; font-size: 15px; transition: all 0.3s; border: 1px solid; }
+        .ecart-box.tight { background-color: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.4); color: #22c55e; }
+        .ecart-box.normal { background-color: rgba(255, 215, 0, 0.1); border-color: rgba(255, 215, 0, 0.4); color: #FFD700; }
+        .ecart-box.wide { background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); color: #ef4444; }
+        .ecart-box.empty { background-color: rgba(107, 114, 128, 0.05); border-color: rgba(107, 114, 128, 0.2); color: #6b7280; }
+        
         .totals-title { font-size: 12px; font-weight: 800; color: #FFD700; text-align: center; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
         .totals-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 25px; }
         .total-box {
@@ -104,19 +112,6 @@
             padding: 12px 2px; text-align: center; color: #FFD700; font-weight: 800; font-size: 15px; transition: all 0.3s;
         }
         .total-box.filled { background-color: rgba(255, 215, 0, 0.15); border-style: solid; border-color: #FFD700; }
-        
-        /* NOUVEAU : LIGNE D'ÉCARTS */
-        .ecart-title { font-size: 12px; font-weight: 800; color: #f97316; text-align: center; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-        .ecart-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 25px; }
-        .ecart-box {
-            border-radius: 10px; padding: 12px 2px; text-align: center;
-            font-weight: 800; font-size: 15px; transition: all 0.3s;
-            border: 1px solid;
-        }
-        .ecart-box.tight { background-color: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.4); color: #22c55e; }
-        .ecart-box.normal { background-color: rgba(255, 215, 0, 0.1); border-color: rgba(255, 215, 0, 0.4); color: #FFD700; }
-        .ecart-box.wide { background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); color: #ef4444; }
-        .ecart-box.empty { background-color: rgba(107, 114, 128, 0.05); border-color: rgba(107, 114, 128, 0.2); color: #6b7280; }
         
         .btn-analyze {
             width: 100%; padding: 18px; background: linear-gradient(135deg, #FFD700 0%, #e6c200 100%);
@@ -129,6 +124,7 @@
         .results-section { display: none; animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
+        /* ============ TABLEAU AVEC EXPANSION ============ */
         .results-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background-color: #0a0c14; border-radius: 12px; overflow: hidden; }
         .results-table th { color: #6b7280; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; padding: 12px 5px; text-align: center; background-color: #131726; border-bottom: 1px solid #1f2538; font-weight: 700; }
         .results-table td { padding: 14px 5px; text-align: center; font-size: 15px; font-weight: 700; border-bottom: 1px solid #1f2538; }
@@ -140,57 +136,65 @@
         .results-table .row-total { background-color: rgba(255, 215, 0, 0.05); border-top: 1px solid rgba(255, 215, 0, 0.2); border-bottom: 1px solid rgba(255, 215, 0, 0.2); }
         .results-table .row-total .team-name { color: #FFD700; font-weight: 800; }
         
-        /* SECTION DOMINANCE H2H */
-        .dominance-section {
-            background: linear-gradient(135deg, #131726 0%, #1a1e30 100%);
-            border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 16px;
-            padding: 20px; margin-bottom: 20px;
+        /* BOUTON EXPANSION QT/MT */
+        .expand-toggle {
+            display: flex; align-items: center; justify-content: center;
+            padding: 10px; margin-bottom: 20px; cursor: pointer;
+            background-color: #0a0c14; border: 1px dashed rgba(255, 215, 0, 0.3);
+            border-radius: 10px; transition: all 0.3s;
+            font-size: 12px; font-weight: 700; color: #FFD700;
+            gap: 8px;
         }
-        .dominance-title {
-            font-size: 12px; font-weight: 800; color: #FFD700;
-            text-align: center; text-transform: uppercase; letter-spacing: 2px;
-            margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px;
+        .expand-toggle:hover { background-color: rgba(255, 215, 0, 0.05); border-color: #FFD700; }
+        .expand-toggle .arrow-toggle {
+            transition: transform 0.3s;
+            font-size: 14px;
         }
+        .expand-toggle.open .arrow-toggle { transform: rotate(180deg); }
+        
+        /* LIGNES DE DIVISIONS QT/MT (cachées par défaut) */
+        .division-row { display: none; }
+        .division-row.visible { display: table-row; }
+        .division-row td {
+            padding: 6px 5px 12px 5px !important;
+            border-bottom: 1px solid #1f2538 !important;
+            background-color: rgba(255, 215, 0, 0.02);
+        }
+        .division-row:last-child td { border-bottom: none !important; }
+        .division-cell {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+        }
+        .division-item {
+            display: flex; flex-direction: column; align-items: center;
+            font-size: 9px; color: #6b7280; font-weight: 700;
+            line-height: 1.2;
+        }
+        .division-item .label { color: #4a5068; text-transform: uppercase; letter-spacing: 0.5px; }
+        .division-item .value { color: #9ca3af; font-size: 11px; font-weight: 800; }
+        .division-item .value.highlight { color: #FFD700; }
+        
+        .dominance-section { background: linear-gradient(135deg, #131726 0%, #1a1e30 100%); border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+        .dominance-title { font-size: 12px; font-weight: 800; color: #FFD700; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .dominance-bars { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
         .dominance-row { display: flex; flex-direction: column; gap: 6px; }
         .dominance-label { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700; }
         .dominance-label .team { color: #fff; display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%; }
-        .dominance-label .wins { color: #FFD700; font-family: 'Inter', monospace; font-weight: 900; font-size: 14px; }
+        .dominance-label .wins { color: #FFD700; font-weight: 900; font-size: 14px; }
         .dominance-bar-track { height: 12px; background-color: #0a0c14; border-radius: 6px; overflow: hidden; position: relative; border: 1px solid #1f2538; }
         .dominance-bar-fill { height: 100%; border-radius: 6px; transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         .dominance-bar-fill.dom { background: linear-gradient(90deg, #FFD700, #FFA500); }
         .dominance-bar-fill.ext { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
         .dominance-bar-fill.draw { background: linear-gradient(90deg, #6b7280, #9ca3af); }
-        .dominance-verdict {
-            text-align: center; padding: 12px; border-radius: 12px;
-            font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px;
-            background-color: rgba(255, 215, 0, 0.1); color: #FFD700;
-            border: 1px dashed rgba(255, 215, 0, 0.4);
-        }
+        .dominance-verdict { text-align: center; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; background-color: rgba(255, 215, 0, 0.1); color: #FFD700; border: 1px dashed rgba(255, 215, 0, 0.4); }
         .dominance-verdict.ext-verdict { background-color: rgba(59, 130, 246, 0.1); color: #60a5fa; border-color: rgba(59, 130, 246, 0.4); }
         .dominance-verdict.balanced-verdict { background-color: rgba(107, 114, 128, 0.1); color: #9ca3af; border-color: rgba(107, 114, 128, 0.4); }
         
-        /* NOUVELLE SECTION ANALYSE DES ÉCARTS */
-        .ecart-analysis-section {
-            background: linear-gradient(135deg, #1a1210 0%, #1a1a10 100%);
-            border: 1px solid rgba(249, 115, 22, 0.3); border-radius: 16px;
-            padding: 20px; margin-bottom: 20px;
-        }
-        .ecart-analysis-title {
-            font-size: 12px; font-weight: 800; color: #f97316;
-            text-align: center; text-transform: uppercase; letter-spacing: 2px;
-            margin-bottom: 18px; display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .ecart-stats-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px;
-        }
-        .ecart-stat-box {
-            background-color: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px 8px; text-align: center;
-            border: 1px solid rgba(249, 115, 22, 0.2);
-        }
+        .ecart-analysis-section { background: linear-gradient(135deg, #1a1210 0%, #1a1a10 100%); border: 1px solid rgba(249, 115, 22, 0.3); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+        .ecart-analysis-title { font-size: 12px; font-weight: 800; color: #f97316; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 18px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .ecart-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+        .ecart-stat-box { background-color: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px 8px; text-align: center; border: 1px solid rgba(249, 115, 22, 0.2); }
         .ecart-stat-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 5px; }
         .ecart-stat-value { font-size: 18px; font-weight: 900; color: #f97316; }
-        
         .ecart-distribution { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
         .ecart-dist-item { display: flex; align-items: center; gap: 10px; font-size: 12px; }
         .ecart-dist-label { width: 130px; color: #9ca3af; font-weight: 700; }
@@ -200,61 +204,28 @@
         .ecart-dist-bar-fill.normal { background: linear-gradient(90deg, #FFD700, #fbbf24); }
         .ecart-dist-bar-fill.wide { background: linear-gradient(90deg, #ef4444, #f87171); }
         .ecart-dist-count { width: 60px; text-align: right; font-weight: 800; color: #fff; font-size: 11px; }
-        
-        .ecart-verdict {
-            text-align: center; padding: 14px; border-radius: 12px;
-            font-size: 13px; font-weight: 800; line-height: 1.5;
-            border: 1px dashed;
-        }
+        .ecart-verdict { text-align: center; padding: 14px; border-radius: 12px; font-size: 13px; font-weight: 800; line-height: 1.5; border: 1px dashed; }
         .ecart-verdict.tight-verdict { background-color: rgba(34, 197, 94, 0.1); color: #4ade80; border-color: rgba(34, 197, 94, 0.4); }
         .ecart-verdict.normal-verdict { background-color: rgba(255, 215, 0, 0.1); color: #FFD700; border-color: rgba(255, 215, 0, 0.4); }
         .ecart-verdict.wide-verdict { background-color: rgba(239, 68, 68, 0.1); color: #f87171; border-color: rgba(239, 68, 68, 0.4); }
-        .ecart-verdict .verdict-boost {
-            display: block; font-size: 11px; color: #fff; margin-top: 6px;
-            font-weight: 600; opacity: 0.9;
-        }
+        .ecart-verdict .verdict-boost { display: block; font-size: 11px; color: #fff; margin-top: 6px; font-weight: 600; opacity: 0.9; }
         
-        /* PRÉDICTIONS */
         .prediction-section { margin-top: 20px; }
-        .prediction-intro {
-            text-align: center; font-size: 12px; color: #9ca3af;
-            margin-bottom: 15px; padding: 10px 15px;
-            background-color: rgba(255, 215, 0, 0.05);
-            border: 1px dashed rgba(255, 215, 0, 0.3);
-            border-radius: 10px; line-height: 1.5;
-        }
-        .prediction-card { 
-            background-color: #0a0c14; border: 1px solid #1f2538; border-radius: 14px; 
-            padding: 15px; margin-bottom: 12px; position: relative; overflow: hidden; 
-        }
+        .prediction-intro { text-align: center; font-size: 12px; color: #9ca3af; margin-bottom: 15px; padding: 10px 15px; background-color: rgba(255, 215, 0, 0.05); border: 1px dashed rgba(255, 215, 0, 0.3); border-radius: 10px; line-height: 1.5; }
+        .prediction-card { background-color: #0a0c14; border: 1px solid #1f2538; border-radius: 14px; padding: 15px; margin-bottom: 12px; position: relative; overflow: hidden; }
         .prediction-card.safe-under { border-left: 4px solid #22c55e; }
         .prediction-card.balanced { border-left: 4px solid #FFD700; }
         .prediction-card.safe-over { border-left: 4px solid #3b82f6; }
-
-        .prediction-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .prediction-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; }
         .prediction-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
         .prediction-card.safe-under .prediction-title { color: #22c55e; }
         .prediction-card.balanced .prediction-title { color: #FFD700; }
         .prediction-card.safe-over .prediction-title { color: #3b82f6; }
-
-        .prediction-reco {
-            font-size: 10px; font-weight: 800; padding: 3px 8px;
-            border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        .reco-under { background-color: rgba(34, 197, 94, 0.15); color: #4ade80; }
-        .reco-over { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-        
-        .boost-badge {
-            font-size: 9px; font-weight: 800; padding: 3px 7px;
-            border-radius: 6px; background-color: rgba(34, 197, 94, 0.2); color: #4ade80;
-            margin-left: auto;
-        }
-
+        .boost-badge { font-size: 9px; font-weight: 800; padding: 3px 7px; border-radius: 6px; background-color: rgba(34, 197, 94, 0.2); color: #4ade80; }
         .prediction-line { font-size: 17px; font-weight: 900; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
         .prediction-line .arrow { font-size: 20px; }
         .prediction-line .arrow.under { color: #22c55e; }
         .prediction-line .arrow.over { color: #3b82f6; }
-
         .prediction-bars { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
         .prediction-bar-item { display: flex; align-items: center; gap: 8px; font-size: 11px; }
         .prediction-bar-label { width: 50px; color: #6b7280; font-weight: 700; text-transform: uppercase; }
@@ -264,7 +235,6 @@
         .prediction-bar-fill.over { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
         .prediction-percent { width: 38px; text-align: right; font-weight: 800; }
         .prediction-percent.highlight { font-size: 13px; }
-
         .prediction-desc { font-size: 11px; color: #6b7280; margin-top: 10px; padding-top: 10px; border-top: 1px solid #1f2538; line-height: 1.4; font-style: italic; }
         
         .btn-save {
@@ -274,7 +244,6 @@
         }
         .btn-save:hover { background: linear-gradient(135deg, #34d399 0%, #22c55e 100%); }
         
-        /* HISTORIQUE */
         .history-page { display: none; }
         .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .history-header h2 { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
@@ -304,7 +273,6 @@
 </head>
 <body>
 
-<!-- ================= ÉCRAN DE CONNEXION ================= -->
 <div id="login-screen">
     <div class="login-box">
         <h1>🏆 PRO STATS H2H </h1>
@@ -315,7 +283,6 @@
     </div>
 </div>
 
-<!-- ================= APPLICATION ================= -->
 <div class="app-container" id="app-container">
     
     <div class="header">
@@ -371,7 +338,6 @@
                 <input type="number" class="score-input" id="ext5" placeholder="M5" oninput="calculateTotals()">
             </div>
 
-            <!-- NOUVEAU : ÉCART PAR MATCH -->
             <div class="ecart-title">⚖️ Écart par Match</div>
             <div class="ecart-grid">
                 <div class="ecart-box empty" id="ecart1">-</div>
@@ -390,25 +356,64 @@
                 <div class="total-box" id="total5">-</div>
             </div>
 
-            <button class="btn-analyze" onclick="analyzeMatch()">ANALYSER </button>
+            <button class="btn-analyze" onclick="analyzeMatch()">ANALYSER GRATUITEMENT</button>
         </div>
 
         <div class="card results-section" id="results-section">
             <div class="card-title">🏆 Pronostic VIP PRO</div>
+            
             <table class="results-table">
                 <thead><tr><th>ÉQUIPE</th><th>MIN</th><th>MAX</th><th>MOY</th></tr></thead>
                 <tbody>
-                    <tr><td class="team-name" id="res-dom-name">🏠 Domicile</td><td class="val-min" id="res-dom-min">-</td><td class="val-max" id="res-dom-max">-</td><td class="val-moy" id="res-dom-moy">-</td></tr>
-                    <tr><td class="team-name" id="res-ext-name">🚌 Extérieur</td><td class="val-min" id="res-ext-min">-</td><td class="val-max" id="res-ext-max">-</td><td class="val-moy" id="res-ext-moy">-</td></tr>
-                    <tr class="row-total"><td class="team-name">📊 TOTAL</td><td class="val-min" id="res-tot-min">-</td><td class="val-max" id="res-tot-max">-</td><td class="val-moy" id="res-tot-moy">-</td></tr>
+                    <tr>
+                        <td class="team-name" id="res-dom-name">🏠 Domicile</td>
+                        <td class="val-min" id="res-dom-min">-</td>
+                        <td class="val-max" id="res-dom-max">-</td>
+                        <td class="val-moy" id="res-dom-moy">-</td>
+                    </tr>
+                    <tr class="division-row" id="division-dom">
+                        <td></td>
+                        <td><div class="division-cell" id="div-dom-min"></div></td>
+                        <td><div class="division-cell" id="div-dom-max"></div></td>
+                        <td><div class="division-cell" id="div-dom-moy"></div></td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="team-name" id="res-ext-name">🚌 Extérieur</td>
+                        <td class="val-min" id="res-ext-min">-</td>
+                        <td class="val-max" id="res-ext-max">-</td>
+                        <td class="val-moy" id="res-ext-moy">-</td>
+                    </tr>
+                    <tr class="division-row" id="division-ext">
+                        <td></td>
+                        <td><div class="division-cell" id="div-ext-min"></div></td>
+                        <td><div class="division-cell" id="div-ext-max"></div></td>
+                        <td><div class="division-cell" id="div-ext-moy"></div></td>
+                    </tr>
+                    
+                    <tr class="row-total">
+                        <td class="team-name">📊 TOTAL</td>
+                        <td class="val-min" id="res-tot-min">-</td>
+                        <td class="val-max" id="res-tot-max">-</td>
+                        <td class="val-moy" id="res-tot-moy">-</td>
+                    </tr>
+                    <tr class="division-row" id="division-tot">
+                        <td></td>
+                        <td><div class="division-cell" id="div-tot-min"></div></td>
+                        <td><div class="division-cell" id="div-tot-max"></div></td>
+                        <td><div class="division-cell" id="div-tot-moy"></div></td>
+                    </tr>
                 </tbody>
             </table>
             
+            <!-- BOUTON POUR AFFICHER / MASQUER LES DIVISIONS -->
+            <div class="expand-toggle" id="expandToggle" onclick="toggleDivisions()">
+                <span class="arrow-toggle">▼</span>
+                <span id="expandLabel">Afficher les divisions par période</span>
+            </div>
+            
             <div class="dominance-section" id="dominance-section"></div>
-            
-            <!-- NOUVEAU : ANALYSE DES ÉCARTS -->
             <div class="ecart-analysis-section" id="ecart-analysis-section"></div>
-            
             <div class="prediction-section" id="prediction-section"></div>
             
             <button class="btn-save" onclick="saveToHistory()"><span>💾</span> SAUVEGARDER DANS L'HISTORIQUE</button>
@@ -426,7 +431,6 @@
 
 </div>
 
-<!-- ================= SCRIPTS FIREBASE ================= -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
@@ -454,7 +458,6 @@
         try {
             const docRef = doc(db, "codes_acces", codeInput);
             const docSnap = await getDoc(docRef);
-
             if (docSnap.exists() && docSnap.data().actif === true) {
                 loginScreen.style.display = 'none';
                 appContainer.style.display = 'flex';
@@ -464,7 +467,7 @@
             }
         } catch (error) {
             console.error(error);
-            errorMsg.textContent = "Erreur de connexion. Vérifiez votre réseau.";
+            errorMsg.textContent = "Erreur de connexion.";
         }
     };
 
@@ -475,7 +478,6 @@
 </script>
 
 <script>
-    // ================= BASE DE DONNÉES DES ÉQUIPES =================
     const teamsDatabase = {
         basket: [
             "Atlanta Hawks", "Boston Celtics", "Brooklyn Nets", "Charlotte Hornets", "Chicago Bulls", "Cleveland Cavaliers", "Dallas Mavericks", "Denver Nuggets", "Detroit Pistons", "Golden State Warriors",
@@ -509,26 +511,20 @@
     let currentAnalysis = null;
     let historyDisplayLimit = 5;
     let historyAll = [];
+    let divisionsVisible = false;
 
-    // ================= UTILITAIRES =================
     function getSportConfig() {
-        if (currentSport === 'basket') {
-            return { marginSmall: 5, marginMedium: 10, roundTo: 5, unit: 'pts' };
-        } else {
-            return { marginSmall: 0.5, marginMedium: 1, roundTo: 0.5, unit: 'buts' };
-        }
+        if (currentSport === 'basket') return { marginSmall: 5, marginMedium: 10, roundTo: 5, unit: 'pts', periods: 4, periodLabel: 'QT', showHalves: true };
+        return { marginSmall: 0.5, marginMedium: 1, roundTo: 0.5, unit: 'buts', periods: 3, periodLabel: 'P', showHalves: false };
     }
 
-    function roundToUnit(value, unit) {
-        return Math.ceil(value / unit) * unit;
+    function roundToUnit(value, unit) { return Math.ceil(value / unit) * unit; }
+    function formatNumber(num, sport) { if (sport === 'hockey') return num.toFixed(1); return Math.round(num); }
+    function formatDivision(num, sport) { 
+        // 1 décimale pour toutes les divisions
+        return num.toFixed(1); 
     }
 
-    function formatNumber(num, sport) {
-        if (sport === 'hockey') return num.toFixed(1);
-        return Math.round(num);
-    }
-
-    // ================= GESTION DU SPORT =================
     window.setSport = function(sport) {
         currentSport = sport;
         document.getElementById('btn-basket').classList.remove('active');
@@ -537,9 +533,13 @@
         else document.getElementById('btn-hockey').classList.add('active');
         document.getElementById('teamDom').value = ''; document.getElementById('teamExt').value = '';
         document.getElementById('list-dom').style.display = 'none'; document.getElementById('list-ext').style.display = 'none';
+        // Réinitialiser l'état des divisions
+        divisionsVisible = false;
+        document.getElementById('expandToggle').classList.remove('open');
+        document.getElementById('expandLabel').textContent = 'Afficher les divisions par période';
+        document.querySelectorAll('.division-row').forEach(r => r.classList.remove('visible'));
     };
 
-    // ================= RECHERCHE =================
     window.searchTeams = function(type) {
         const inputId = type === 'dom' ? 'teamDom' : 'teamExt';
         const listId = type === 'dom' ? 'list-dom' : 'list-ext';
@@ -568,7 +568,6 @@
         }
     });
 
-    // ================= CALCUL TOTAUX + ÉCARTS =================
     window.calculateTotals = function() {
         for (let i = 1; i <= 5; i++) {
             const domInput = document.getElementById('dom' + i).value;
@@ -577,7 +576,6 @@
             const ext = parseFloat(extInput);
             const totalBox = document.getElementById('total' + i);
             const ecartBox = document.getElementById('ecart' + i);
-            
             const hasDom = !isNaN(dom) && domInput !== '';
             const hasExt = !isNaN(ext) && extInput !== '';
             
@@ -589,7 +587,6 @@
                 const ecart = Math.abs(dom - ext);
                 totalBox.textContent = formatNumber(total, currentSport);
                 totalBox.classList.add('filled');
-                
                 ecartBox.textContent = formatNumber(ecart, currentSport);
                 if (ecart <= 5) ecartBox.className = 'ecart-box tight';
                 else if (ecart <= 15) ecartBox.className = 'ecart-box normal';
@@ -598,7 +595,51 @@
         }
     };
 
-    // ================= ANALYSE =================
+    window.toggleDivisions = function() {
+        divisionsVisible = !divisionsVisible;
+        const toggle = document.getElementById('expandToggle');
+        const label = document.getElementById('expandLabel');
+        const rows = document.querySelectorAll('.division-row');
+        
+        if (divisionsVisible) {
+            rows.forEach(r => r.classList.add('visible'));
+            toggle.classList.add('open');
+            label.textContent = 'Masquer les divisions par période';
+        } else {
+            rows.forEach(r => r.classList.remove('visible'));
+            toggle.classList.remove('open');
+            label.textContent = 'Afficher les divisions par période';
+        }
+    };
+
+    function renderDivisionCell(container, value, sport, config) {
+        if (value === null || value === undefined || isNaN(value)) {
+            container.innerHTML = '';
+            return;
+        }
+        
+        const periodValue = value / config.periods;
+        
+        let html = `
+            <div class="division-item">
+                <span class="label">↓${config.periodLabel}</span>
+                <span class="value highlight">${formatDivision(periodValue, sport)}</span>
+            </div>
+        `;
+        
+        if (config.showHalves) {
+            const halfValue = value / 2;
+            html += `
+                <div class="division-item">
+                    <span class="label">↓MT</span>
+                    <span class="value">${formatDivision(halfValue, sport)}</span>
+                </div>
+            `;
+        }
+        
+        container.innerHTML = html;
+    }
+
     window.analyzeMatch = function() {
         const domScores = [], extScores = [], totals = [], ecarts = [];
         const domName = document.getElementById('teamDom').value.trim() || 'Domicile';
@@ -622,12 +663,9 @@
         const extMoy = (extScores.reduce((a, b) => a + b, 0) / extScores.length);
         const totMin = Math.min(...totals), totMax = Math.max(...totals);
         const totMoy = (totals.reduce((a, b) => a + b, 0) / totals.length);
-        
         const ecartMoy = ecarts.reduce((a, b) => a + b, 0) / ecarts.length;
         const ecartMax = Math.max(...ecarts);
         const ecartMin = Math.min(...ecarts);
-        
-        // Répartition
         const tight = ecarts.filter(e => e <= 5).length;
         const normal = ecarts.filter(e => e > 5 && e <= 15).length;
         const wide = ecarts.filter(e => e > 15).length;
@@ -644,6 +682,23 @@
         document.getElementById('res-tot-max').textContent = formatNumber(totMax, currentSport);
         document.getElementById('res-tot-moy').textContent = formatNumber(totMoy, currentSport);
 
+        // RENDER DIVISIONS
+        const config = getSportConfig();
+        renderDivisionCell(document.getElementById('div-dom-min'), domMin, currentSport, config);
+        renderDivisionCell(document.getElementById('div-dom-max'), domMax, currentSport, config);
+        renderDivisionCell(document.getElementById('div-dom-moy'), domMoy, currentSport, config);
+        renderDivisionCell(document.getElementById('div-ext-min'), extMin, currentSport, config);
+        renderDivisionCell(document.getElementById('div-ext-max'), extMax, currentSport, config);
+        renderDivisionCell(document.getElementById('div-ext-moy'), extMoy, currentSport, config);
+        renderDivisionCell(document.getElementById('div-tot-min'), totMin, currentSport, config);
+        renderDivisionCell(document.getElementById('div-tot-max'), totMax, currentSport, config);
+        renderDivisionCell(document.getElementById('div-tot-moy'), totMoy, currentSport, config);
+
+        // Reset divisions visibility (garder l'état actuel)
+        if (divisionsVisible) {
+            document.querySelectorAll('.division-row').forEach(r => r.classList.add('visible'));
+        }
+
         let domWins = 0, extWins = 0, draws = 0;
         for (let i = 0; i < domScores.length; i++) {
             if (domScores[i] > extScores[i]) domWins++;
@@ -652,12 +707,8 @@
         }
 
         document.getElementById('dominance-section').innerHTML = generateDominanceHTML(domName, extName, domWins, extWins, draws, domScores.length);
-        
-        // Analyse des écarts
         const ecartAnalysis = analyzeEcarts(ecartMoy, ecartMax, ecartMin, tight, normal, wide, ecarts.length);
         document.getElementById('ecart-analysis-section').innerHTML = ecartAnalysis.html;
-        
-        // Prédictions avec bonus écart
         document.getElementById('prediction-section').innerHTML = generatePredictions(totMin, totMax, totMoy, ecartAnalysis.verdict);
 
         currentAnalysis = {
@@ -670,19 +721,13 @@
         document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
     };
 
-    // ================= DOMINANCE H2H =================
     function generateDominanceHTML(domName, extName, domWins, extWins, draws, totalMatches) {
         const domPercent = totalMatches > 0 ? (domWins / totalMatches * 100) : 0;
         const extPercent = totalMatches > 0 ? (extWins / totalMatches * 100) : 0;
-        
         let verdictHTML = '';
-        if (domWins > extWins) {
-            verdictHTML = `<div class="dominance-verdict">👑 ${domName} domine les confrontations</div>`;
-        } else if (extWins > domWins) {
-            verdictHTML = `<div class="dominance-verdict ext-verdict">👑 ${extName} domine les confrontations</div>`;
-        } else {
-            verdictHTML = `<div class="dominance-verdict balanced-verdict">🤝 Égalité parfaite</div>`;
-        }
+        if (domWins > extWins) verdictHTML = `<div class="dominance-verdict">👑 ${domName} domine les confrontations</div>`;
+        else if (extWins > domWins) verdictHTML = `<div class="dominance-verdict ext-verdict">👑 ${extName} domine les confrontations</div>`;
+        else verdictHTML = `<div class="dominance-verdict balanced-verdict">🤝 Égalité parfaite</div>`;
 
         return `
             <div class="dominance-title">🏆 DOMINANCE H2H</div>
@@ -695,37 +740,17 @@
                     <div class="dominance-label"><span class="team">🚌 ${extName}</span><span class="wins">${extWins} victoire${extWins > 1 ? 's' : ''}</span></div>
                     <div class="dominance-bar-track"><div class="dominance-bar-fill ext" style="width: ${extPercent}%;"></div></div>
                 </div>
-                ${draws > 0 ? `
-                <div class="dominance-row">
-                    <div class="dominance-label"><span class="team">🤝 Matchs nuls</span><span class="wins">${draws}</span></div>
-                    <div class="dominance-bar-track"><div class="dominance-bar-fill draw" style="width: ${(draws/totalMatches*100)}%;"></div></div>
-                </div>
-                ` : ''}
+                ${draws > 0 ? `<div class="dominance-row"><div class="dominance-label"><span class="team">🤝 Matchs nuls</span><span class="wins">${draws}</span></div><div class="dominance-bar-track"><div class="dominance-bar-fill draw" style="width: ${(draws/totalMatches*100)}%;"></div></div></div>` : ''}
             </div>
             ${verdictHTML}
         `;
     }
 
-    // ================= ANALYSE DES ÉCARTS =================
     function analyzeEcarts(ecartMoy, ecartMax, ecartMin, tight, normal, wide, total) {
         let verdict, verdictClass, verdictText, boost;
-        
-        if (ecartMoy <= 8) {
-            verdict = 'tight';
-            verdictClass = 'tight-verdict';
-            verdictText = '🎯 MATCHS SERRÉS DÉTECTÉS';
-            boost = '+10% de fiabilité sur les paris MOINS (Under)';
-        } else if (ecartMoy <= 15) {
-            verdict = 'normal';
-            verdictClass = 'normal-verdict';
-            verdictText = '⚖️ MATCHS ÉQUILIBRÉS';
-            boost = 'Aucun ajustement — les prédictions restent standards';
-        } else {
-            verdict = 'wide';
-            verdictClass = 'wide-verdict';
-            verdictText = '🌊 MATCHS OUVERTS / DÉSÉQUILIBRÉS';
-            boost = '+10% de fiabilité sur les paris PLUS (Over)';
-        }
+        if (ecartMoy <= 8) { verdict = 'tight'; verdictClass = 'tight-verdict'; verdictText = '🎯 MATCHS SERRÉS DÉTECTÉS'; boost = '+10% de fiabilité sur les paris MOINS (Under)'; }
+        else if (ecartMoy <= 15) { verdict = 'normal'; verdictClass = 'normal-verdict'; verdictText = '⚖️ MATCHS ÉQUILIBRÉS'; boost = 'Aucun ajustement — les prédictions restent standards'; }
+        else { verdict = 'wide'; verdictClass = 'wide-verdict'; verdictText = '🌊 MATCHS OUVERTS / DÉSÉQUILIBRÉS'; boost = '+10% de fiabilité sur les paris PLUS (Over)'; }
         
         const tightPercent = Math.round((tight / total) * 100);
         const normalPercent = Math.round((normal / total) * 100);
@@ -735,66 +760,35 @@
             verdict,
             html: `
                 <div class="ecart-analysis-title">⚖️ ANALYSE DES ÉCARTS</div>
-                
                 <div class="ecart-stats-grid">
-                    <div class="ecart-stat-box">
-                        <div class="ecart-stat-label">Écart Moyen</div>
-                        <div class="ecart-stat-value">${formatNumber(ecartMoy, currentSport)}</div>
-                    </div>
-                    <div class="ecart-stat-box">
-                        <div class="ecart-stat-label">Écart Max</div>
-                        <div class="ecart-stat-value">${formatNumber(ecartMax, currentSport)}</div>
-                    </div>
-                    <div class="ecart-stat-box">
-                        <div class="ecart-stat-label">Écart Min</div>
-                        <div class="ecart-stat-value">${formatNumber(ecartMin, currentSport)}</div>
-                    </div>
+                    <div class="ecart-stat-box"><div class="ecart-stat-label">Écart Moyen</div><div class="ecart-stat-value">${formatNumber(ecartMoy, currentSport)}</div></div>
+                    <div class="ecart-stat-box"><div class="ecart-stat-label">Écart Max</div><div class="ecart-stat-value">${formatNumber(ecartMax, currentSport)}</div></div>
+                    <div class="ecart-stat-box"><div class="ecart-stat-label">Écart Min</div><div class="ecart-stat-value">${formatNumber(ecartMin, currentSport)}</div></div>
                 </div>
-                
                 <div class="ecart-distribution">
-                    <div class="ecart-dist-item">
-                        <div class="ecart-dist-label">🟢 Serrés (≤5)</div>
-                        <div class="ecart-dist-bar-track"><div class="ecart-dist-bar-fill tight" style="width: ${tightPercent}%;"></div></div>
-                        <div class="ecart-dist-count">${tight}/${total}</div>
-                    </div>
-                    <div class="ecart-dist-item">
-                        <div class="ecart-dist-label">🟡 Normaux (6-15)</div>
-                        <div class="ecart-dist-bar-track"><div class="ecart-dist-bar-fill normal" style="width: ${normalPercent}%;"></div></div>
-                        <div class="ecart-dist-count">${normal}/${total}</div>
-                    </div>
-                    <div class="ecart-dist-item">
-                        <div class="ecart-dist-label">🔴 Ouverts (>15)</div>
-                        <div class="ecart-dist-bar-track"><div class="ecart-dist-bar-fill wide" style="width: ${widePercent}%;"></div></div>
-                        <div class="ecart-dist-count">${wide}/${total}</div>
-                    </div>
+                    <div class="ecart-dist-item"><div class="ecart-dist-label">🟢 Serrés (≤5)</div><div class="ecart-dist-bar-track"><div class="ecart-dist-bar-fill tight" style="width: ${tightPercent}%;"></div></div><div class="ecart-dist-count">${tight}/${total}</div></div>
+                    <div class="ecart-dist-item"><div class="ecart-dist-label">🟡 Normaux (6-15)</div><div class="ecart-dist-bar-track"><div class="ecart-dist-bar-fill normal" style="width: ${normalPercent}%;"></div></div><div class="ecart-dist-count">${normal}/${total}</div></div>
+                    <div class="ecart-dist-item"><div class="ecart-dist-label">🔴 Ouverts (>15)</div><div class="ecart-dist-bar-track"><div class="ecart-dist-bar-fill wide" style="width: ${widePercent}%;"></div></div><div class="ecart-dist-count">${wide}/${total}</div></div>
                 </div>
-                
-                <div class="ecart-verdict ${verdictClass}">
-                    ${verdictText}
-                    <span class="verdict-boost">${boost}</span>
-                </div>
+                <div class="ecart-verdict ${verdictClass}">${verdictText}<span class="verdict-boost">${boost}</span></div>
             `
         };
     }
 
-    // ================= PRÉDICTIONS V6.2 =================
     function generatePredictions(min, max, moy, ecartVerdict) {
         const config = getSportConfig();
         const sport = currentSport;
         const unit = config.unit;
         
-        // Déterminer le bonus selon le verdict
         let underBoost = 0, overBoost = 0;
-        if (ecartVerdict === 'tight') { underBoost = 10; }
-        else if (ecartVerdict === 'wide') { overBoost = 10; }
+        if (ecartVerdict === 'tight') underBoost = 10;
+        else if (ecartVerdict === 'wide') overBoost = 10;
         
-        // ZONE SÛRE - MOINS
         const safeUnderLine = roundToUnit(max + config.marginSmall, config.roundTo);
         let safeUnderPercent = 85 + Math.floor(Math.random() * 5);
         safeUnderPercent = Math.min(95, safeUnderPercent + underBoost);
         const safeUnderOver = 100 - safeUnderPercent;
 
-        // ZONE ÉQUILIBRÉE
         const balancedLine = roundToUnit(moy, config.roundTo);
         let balancedUnderPercent = Math.round(((max - balancedLine) / (max - min || 1)) * 100);
         if (balancedUnderPercent > 90) balancedUnderPercent = 90;
@@ -802,16 +796,13 @@
         const balancedOverPercent = 100 - balancedUnderPercent;
         const balancedReco = balancedUnderPercent >= 50 ? 'under' : 'over';
 
-        // ZONE SÛRE - PLUS
         const safeOverLine = Math.max(0, Math.floor((min - config.marginSmall) / config.roundTo) * config.roundTo);
         let safeOverPercent = 80 + Math.floor(Math.random() * 8);
         safeOverPercent = Math.min(95, safeOverPercent + overBoost);
         const safeOverUnder = 100 - safeOverPercent;
 
         return `
-            <div class="prediction-intro">
-                💡 Regardez la ligne de votre bookmaker et choisissez la zone correspondante.
-            </div>
+            <div class="prediction-intro">💡 Regardez la ligne de votre bookmaker et choisissez la zone correspondante.</div>
 
             <div class="prediction-card safe-under">
                 <div class="prediction-header">
@@ -820,45 +811,20 @@
                 </div>
                 <div class="prediction-line"><span class="arrow under">↓</span> Moins de ${formatNumber(safeUnderLine, sport)} ${unit}</div>
                 <div class="prediction-bars">
-                    <div class="prediction-bar-item">
-                        <div class="prediction-bar-label">MOINS</div>
-                        <div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${safeUnderPercent}%;"></div></div>
-                        <div class="prediction-percent highlight" style="color: #22c55e;">${safeUnderPercent}%</div>
-                    </div>
-                    <div class="prediction-bar-item">
-                        <div class="prediction-bar-label">PLUS</div>
-                        <div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${safeUnderOver}%;"></div></div>
-                        <div class="prediction-percent" style="color: #6b7280;">${safeUnderOver}%</div>
-                    </div>
+                    <div class="prediction-bar-item"><div class="prediction-bar-label">MOINS</div><div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${safeUnderPercent}%;"></div></div><div class="prediction-percent highlight" style="color: #22c55e;">${safeUnderPercent}%</div></div>
+                    <div class="prediction-bar-item"><div class="prediction-bar-label">PLUS</div><div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${safeUnderOver}%;"></div></div><div class="prediction-percent" style="color: #6b7280;">${safeUnderOver}%</div></div>
                 </div>
-                <div class="prediction-desc">
-                    📊 Aucun match n'a dépassé ${formatNumber(max, sport)} ${unit}. Zone fiable si bookmaker ≥ ${formatNumber(safeUnderLine, sport)}.
-                </div>
+                <div class="prediction-desc">📊 Aucun match n'a dépassé ${formatNumber(max, sport)} ${unit}. Zone fiable si bookmaker ≥ ${formatNumber(safeUnderLine, sport)}.</div>
             </div>
 
             <div class="prediction-card balanced">
-                <div class="prediction-header">
-                    <div class="prediction-title">🟡 ZONE ÉQUILIBRÉE</div>
-                </div>
-                <div class="prediction-line">
-                    <span class="arrow ${balancedReco}">${balancedReco === 'under' ? '↓' : '↑'}</span>
-                    ${balancedReco === 'under' ? 'Moins' : 'Plus'} de ${formatNumber(balancedLine, sport)} ${unit}
-                </div>
+                <div class="prediction-header"><div class="prediction-title">🟡 ZONE ÉQUILIBRÉE</div></div>
+                <div class="prediction-line"><span class="arrow ${balancedReco}">${balancedReco === 'under' ? '↓' : '↑'}</span> ${balancedReco === 'under' ? 'Moins' : 'Plus'} de ${formatNumber(balancedLine, sport)} ${unit}</div>
                 <div class="prediction-bars">
-                    <div class="prediction-bar-item">
-                        <div class="prediction-bar-label">MOINS</div>
-                        <div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${balancedUnderPercent}%;"></div></div>
-                        <div class="prediction-percent ${balancedReco === 'under' ? 'highlight' : ''}" style="color: ${balancedReco === 'under' ? '#22c55e' : '#6b7280'};">${balancedUnderPercent}%</div>
-                    </div>
-                    <div class="prediction-bar-item">
-                        <div class="prediction-bar-label">PLUS</div>
-                        <div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${balancedOverPercent}%;"></div></div>
-                        <div class="prediction-percent ${balancedReco === 'over' ? 'highlight' : ''}" style="color: ${balancedReco === 'over' ? '#3b82f6' : '#6b7280'};">${balancedOverPercent}%</div>
-                    </div>
+                    <div class="prediction-bar-item"><div class="prediction-bar-label">MOINS</div><div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${balancedUnderPercent}%;"></div></div><div class="prediction-percent ${balancedReco === 'under' ? 'highlight' : ''}" style="color: ${balancedReco === 'under' ? '#22c55e' : '#6b7280'};">${balancedUnderPercent}%</div></div>
+                    <div class="prediction-bar-item"><div class="prediction-bar-label">PLUS</div><div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${balancedOverPercent}%;"></div></div><div class="prediction-percent ${balancedReco === 'over' ? 'highlight' : ''}" style="color: ${balancedReco === 'over' ? '#3b82f6' : '#6b7280'};">${balancedOverPercent}%</div></div>
                 </div>
-                <div class="prediction-desc">
-                    ⚖️ Ligne proche de la moyenne historique (${formatNumber(moy, sport)} ${unit}). Pari risqué mais meilleure cote.
-                </div>
+                <div class="prediction-desc">⚖️ Ligne proche de la moyenne historique (${formatNumber(moy, sport)} ${unit}). Pari risqué mais meilleure cote.</div>
             </div>
 
             <div class="prediction-card safe-over">
@@ -868,37 +834,25 @@
                 </div>
                 <div class="prediction-line"><span class="arrow over">↑</span> Plus de ${formatNumber(safeOverLine, sport)} ${unit}</div>
                 <div class="prediction-bars">
-                    <div class="prediction-bar-item">
-                        <div class="prediction-bar-label">MOINS</div>
-                        <div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${safeOverUnder}%;"></div></div>
-                        <div class="prediction-percent" style="color: #6b7280;">${safeOverUnder}%</div>
-                    </div>
-                    <div class="prediction-bar-item">
-                        <div class="prediction-bar-label">PLUS</div>
-                        <div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${safeOverPercent}%;"></div></div>
-                        <div class="prediction-percent highlight" style="color: #3b82f6;">${safeOverPercent}%</div>
-                    </div>
+                    <div class="prediction-bar-item"><div class="prediction-bar-label">MOINS</div><div class="prediction-bar-track"><div class="prediction-bar-fill under" style="width: ${safeOverUnder}%;"></div></div><div class="prediction-percent" style="color: #6b7280;">${safeOverUnder}%</div></div>
+                    <div class="prediction-bar-item"><div class="prediction-bar-label">PLUS</div><div class="prediction-bar-track"><div class="prediction-bar-fill over" style="width: ${safeOverPercent}%;"></div></div><div class="prediction-percent highlight" style="color: #3b82f6;">${safeOverPercent}%</div></div>
                 </div>
-                <div class="prediction-desc">
-                    📊 Aucun match n'est descendu sous ${formatNumber(min, sport)} ${unit}. Zone fiable si bookmaker ≤ ${formatNumber(safeOverLine, sport)}.
-                </div>
+                <div class="prediction-desc">📊 Aucun match n'est descendu sous ${formatNumber(min, sport)} ${unit}. Zone fiable si bookmaker ≤ ${formatNumber(safeOverLine, sport)}.</div>
             </div>
         `;
     }
 
-    // ================= SAUVEGARDE =================
     window.saveToHistory = function() {
         if (!currentAnalysis) return;
-        let history = JSON.parse(localStorage.getItem('h2h_history_v62') || '[]');
+        let history = JSON.parse(localStorage.getItem('h2h_history_v64') || '[]');
         history.unshift(currentAnalysis);
-        localStorage.setItem('h2h_history_v62', JSON.stringify(history));
+        localStorage.setItem('h2h_history_v64', JSON.stringify(history));
         alert("✅ Analyse sauvegardée !");
         document.getElementById('teamDom').value = ''; document.getElementById('teamExt').value = '';
         for (let i = 1; i <= 5; i++) { document.getElementById('dom' + i).value = ''; document.getElementById('ext' + i).value = ''; }
         calculateTotals(); document.getElementById('results-section').style.display = 'none'; currentAnalysis = null;
     };
 
-    // ================= HISTORIQUE =================
     window.showHistory = function() {
         document.getElementById('page-analyze').style.display = 'none';
         document.getElementById('page-history').style.display = 'block';
@@ -911,7 +865,7 @@
     };
 
     function renderHistory() {
-        historyAll = JSON.parse(localStorage.getItem('h2h_history_v62') || '[]');
+        historyAll = JSON.parse(localStorage.getItem('h2h_history_v64') || '[]');
         const list = document.getElementById('history-list');
         const btnLoadMore = document.getElementById('btn-load-more');
         if (historyAll.length === 0) { list.innerHTML = '<div class="empty-history">Aucune analyse sauvegardée.</div>'; btnLoadMore.style.display = 'none'; return; }
@@ -943,12 +897,12 @@
 
     window.deleteHistoryItem = function(index) {
         if (!confirm("Voulez-vous vraiment supprimer cette analyse ?")) return;
-        let history = JSON.parse(localStorage.getItem('h2h_history_v62') || '[]');
-        history.splice(index, 1); localStorage.setItem('h2h_history_v62', JSON.stringify(history)); renderHistory();
+        let history = JSON.parse(localStorage.getItem('h2h_history_v64') || '[]');
+        history.splice(index, 1); localStorage.setItem('h2h_history_v64', JSON.stringify(history)); renderHistory();
     };
 
     window.reloadAnalysis = function(index) {
-        let history = JSON.parse(localStorage.getItem('h2h_history_v62') || '[]');
+        let history = JSON.parse(localStorage.getItem('h2h_history_v64') || '[]');
         const item = history[index]; if (!item) return;
         hideHistory(); setSport(item.sport);
         document.getElementById('teamDom').value = item.domName; document.getElementById('teamExt').value = item.extName;
@@ -958,4 +912,4 @@
 </script>
 
 </body>
-</html>
+                </html>
